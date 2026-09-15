@@ -1,59 +1,68 @@
-# KITORA — Vercel + Neon
+﻿# KITORA
 
-Loja responsiva de camisas de futebol feita com Next.js, TypeScript e Tailwind CSS. Inclui 18 produtos, busca, filtros, detalhes, guia de medidas, carrinho, checkout e rastreio persistente no Neon PostgreSQL.
+> ⚽ **Vista o jogo.** Camisas para quem carrega o futebol no peito.
 
-## Rodar na IDE
+A KITORA é uma loja virtual de camisas de futebol para quem busca modelos atuais, retrôs e versões de torcedor ou jogador. O app permite explorar as peças, consultar detalhes e medidas, escolher tamanhos, montar um carrinho e registrar um pedido com os dados de entrega.
 
-Requisitos: Node.js 22 e pnpm.
+A interface se adapta a celulares, tablets e computadores, com preços em reais e navegação em português.
 
-1. Extraia o ZIP e abra a pasta no VS Code.
-2. Copie `.env.example` para `.env.local`.
-3. Crie um projeto no Neon e cole a string de conexão em `DATABASE_URL`.
-4. Execute:
+**18 modelos** · **8 categorias** · **Do catálogo ao acompanhamento do pedido**
 
-```bash
-pnpm install
-pnpm db:init
-pnpm dev
-```
+## O que você encontra no app
 
-Abra `http://localhost:3000`.
+### 👕 Encontre seu próximo manto
 
-## Variável na Vercel
+O catálogo reúne 18 modelos, organizados nas categorias Brasileirão, Europa, Seleções, Retrô, Américas, Infantil, Treino e Feminina.
 
-Em **Project > Settings > Environment Variables**, adicione:
+- Busca por nome da camisa, time ou categoria.
+- Filtros por categoria, que podem ser combinados com a busca.
+- Fotos ilustrativas, temporada, preços e destaques de produtos.
+- Exibição do preço anterior nas peças com desconto.
 
-| Chave | Valor |
-|---|---|
-| `DATABASE_URL` | A string de conexão PostgreSQL copiada do Neon. Exemplo: `postgresql://usuario:senha@host.neon.tech/neondb?sslmode=require` |
+### 📏 Escolha com as medidas em mãos
 
-Marque `Production`, `Preview` e `Development`, depois faça um novo deploy.
+Ao abrir uma camisa, você encontra sua descrição, cor e características de tecido, acabamento e modelagem. Uma tabela apresenta medidas aproximadas de peito e comprimento, além de uma faixa de altura sugerida para ajudar na escolha.
 
-Não use prefixo `NEXT_PUBLIC_` na conexão do banco. Ela é secreta e somente as rotas do servidor devem acessá-la.
+Antes de adicionar a peça ao carrinho, é possível selecionar um dos tamanhos disponíveis na interface: P, M, G, GG ou 3G.
 
-## Criar a tabela no Neon
+### 🛍️ Seu carrinho, suas escolhas
 
-Há duas opções:
+O carrinho reúne as peças escolhidas com foto, nome, tamanho, quantidade e valor. Você pode aumentar ou diminuir as quantidades e remover uma peça reduzindo sua quantidade a zero. O subtotal é atualizado conforme as alterações.
 
-- Rodar `pnpm db:init` com `DATABASE_URL` definida localmente; ou
-- Abrir o SQL Editor do Neon e executar `database/schema.sql`.
+Os itens são salvos no próprio navegador para permitir que você retome sua seleção ao voltar ao site.
 
-## Publicar na Vercel
+### 📋 Registre seu pedido
 
-1. Envie esta pasta para um repositório GitHub.
-2. Na Vercel, clique em **Add New > Project** e importe o repositório.
-3. O framework será reconhecido como Next.js.
-4. Cadastre `DATABASE_URL`.
-5. Clique em **Deploy**.
+Na finalização, você informa nome, e-mail, telefone e endereço de entrega, incluindo CEP, estado, cidade e bairro. O app registra o pedido e apresenta uma confirmação com o destino e um código de acompanhamento.
 
-## Onde editar
+Guarde esse código: ele permite consultar o pedido depois, pela opção **Rastrear pedido**.
 
-- Produtos, nomes e preços: `app/page.tsx`, constante `products`.
-- Fotos: `public/products`.
-- Banco: `database/schema.sql`.
-- Checkout e rastreio: `app/api/orders/route.ts`.
-- Cores e estilo global: `app/globals.css`.
+### 📦 Acompanhe pelo código
 
-## Antes de vender de verdade
+A consulta pelo código mostra a cidade e o estado de destino, uma previsão de entrega e uma barra de progresso com quatro etapas:
 
-O checkout atual registra pedidos, mas não cobra. Conecte um gateway como Mercado Pago, Stripe ou PagSeguro e valide o pagamento no servidor. O acompanhamento atual estima etapas por data e estado; para rastreio real, integre a API da transportadora ou do Melhor Envio.
+1. Pedido confirmado.
+2. Preparando o manto.
+3. Em trânsito.
+4. Saiu para entrega.
+
+Os pedidos ficam armazenados em banco de dados e podem ser consultados novamente com o código recebido.
+
+## Do primeiro clique ao pedido
+
+1. Explore o catálogo ou busque a camisa que deseja.
+2. Abra os detalhes, consulte as medidas e escolha o tamanho.
+3. Adicione a peça ao carrinho e revise os itens e as quantidades.
+4. Selecione **Finalizar pedido**, preencha os dados de entrega e confirme.
+5. Guarde o código apresentado e use **Rastrear pedido** para consultar o acompanhamento.
+
+## Sobre a versão atual
+
+O catálogo, a seleção de tamanhos, o carrinho e o registro e a consulta de pedidos estão implementados. Algumas partes da experiência ainda são demonstrativas:
+
+- **Pagamento:** a finalização registra o pedido, mas não realiza cobranças. Pix, cartão e parcelamento ainda não têm processamento integrado.
+- **Entrega:** a previsão é estimada a partir do estado de destino. As etapas avançam conforme o tempo desde o registro do pedido, sem consultar uma transportadora.
+- **Frete:** embora a interface mencione cálculo no checkout, a versão atual apresenta apenas o total dos produtos, sem calcular ou cobrar frete.
+- **Conta:** o ícone de perfil está presente, mas ainda não há fluxo de cadastro ou login para clientes.
+
+Assim, é possível percorrer a experiência de escolha e registro de um pedido, com pagamento e logística ainda em caráter demonstrativo.
