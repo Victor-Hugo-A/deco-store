@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS orders (
+  id BIGSERIAL PRIMARY KEY,
+  code VARCHAR(20) UNIQUE NOT NULL,
+  customer_name VARCHAR(150) NOT NULL,
+  email VARCHAR(200) NOT NULL,
+  phone VARCHAR(30) NOT NULL,
+  cep VARCHAR(10) NOT NULL,
+  uf CHAR(2) NOT NULL,
+  city VARCHAR(120) NOT NULL,
+  district VARCHAR(120) NOT NULL,
+  address VARCHAR(250) NOT NULL,
+  items_json JSONB NOT NULL,
+  total NUMERIC(10,2) NOT NULL CHECK (total > 0),
+  status VARCHAR(30) NOT NULL DEFAULT 'confirmed',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_code ON orders(code);
