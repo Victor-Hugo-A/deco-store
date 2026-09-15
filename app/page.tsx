@@ -1,80 +1,738 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Check, CreditCard, Heart, Menu, Minus, PackageCheck, Plus, Search, ShieldCheck, ShoppingBag, Sparkles, Truck, Zap } from "lucide-react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toaster, toast } from "sonner";
-import { AccountMenu } from "@/components/account-menu";
+import {useEffect, useMemo, useState} from "react";
+import {
+    ArrowRight,
+    Check,
+    CreditCard,
+    Heart,
+    Menu,
+    Minus,
+    PackageCheck,
+    Plus,
+    Search,
+    ShieldCheck,
+    ShoppingBag,
+    Sparkles,
+    Truck,
+    Zap
+} from "lucide-react";
+import {Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Progress} from "@/components/ui/progress";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Toaster, toast} from "sonner";
+import {AccountMenu} from "@/components/account-menu";
+import { BrandLogo } from "@/components/brand-logo";
 
-type Product = { id:number; name:string; team:string; category:string; season:string; price:number; oldPrice?:number; image:string; badge?:string; color:string; description:string; details:string[] };
-type CartItem = Product & { size:string; quantity:number };
+
+type Product = {
+    id: number;
+    name: string;
+    team: string;
+    category: string;
+    season: string;
+    price: number;
+    oldPrice?: number;
+    image: string;
+    badge?: string;
+    color: string;
+    description: string;
+    details: string[]
+};
+type CartItem = Product & { size: string; quantity: number };
 
 const products: Product[] = [
-  {id:1,name:"Manto Rubro 26/27",team:"Rio de Janeiro",category:"Brasileirão",season:"2026/27",price:189.9,oldPrice:229.9,image:"/products/rubro.png",badge:"Mais vendida",color:"Vermelho / Preto",description:"Versão torcedor com caimento regular e acabamento premium.",details:["Tecido respirável de secagem rápida","Escudo aplicado em alta definição","Gola canelada com reforço interno"]},
-  {id:2,name:"Madrid White Player",team:"Madrid",category:"Europa",season:"2026/27",price:219.9,image:"/products/white-gold.png",badge:"Versão jogador",color:"Branco / Dourado",description:"Modelagem atlética, leve e ajustada ao corpo.",details:["Tecnologia dry-fit","Aplicações termocolantes","Painéis laterais ventilados"]},
-  {id:3,name:"London Blue Home",team:"Londres",category:"Europa",season:"2026/27",price:179.9,oldPrice:199.9,image:"/products/blue.png",color:"Azul elétrico",description:"Visual contemporâneo com textura geométrica tonal.",details:["Poliéster premium","Costuras reforçadas","Toque macio e leve"]},
-  {id:4,name:"Verde Eterno Retrô",team:"São Paulo",category:"Retrô",season:"1999",price:199.9,image:"/products/green-retro.png",badge:"Coleção retrô",color:"Verde / Creme",description:"Silhueta clássica dos anos 90 com construção atual.",details:["Gola polo estruturada","Tecido encorpado","Etiqueta comemorativa"]},
-  {id:5,name:"Brasil Canarinho",team:"Brasil",category:"Seleções",season:"2026",price:189.9,image:"/products/brazil.png",badge:"Novo",color:"Amarelo / Verde",description:"A energia da seleção em uma peça leve para todos os dias.",details:["Malha ventilada","Modelagem unissex","Barra com acabamento premium"]},
-  {id:6,name:"Argentina Heritage",team:"Argentina",category:"Seleções",season:"Retrô",price:209.9,image:"/products/argentina.png",color:"Azul-celeste / Branco",description:"Listras clássicas e gola retrô em uma edição especial.",details:["Tecido acetinado leve","Gola contrastante","Corte clássico"]},
-  {id:7,name:"Manchester Night Away",team:"Manchester",category:"Europa",season:"2026/27",price:199.9,image:"/products/navy-orange.png",badge:"Lançamento",color:"Azul-marinho / Laranja",description:"Modelo noturno com recortes diagonais de alto contraste.",details:["Malha aerada","Acabamento termocolante","Modelagem esportiva"]},
-  {id:8,name:"Firenze Viola Player",team:"Florença",category:"Europa",season:"2026/27",price:219.9,image:"/products/purple.png",badge:"Versão jogador",color:"Roxo / Prata",description:"Edição de performance com ajuste atlético e tecido ultraleve.",details:["Painéis respiráveis","Corte slim","Tecido de secagem rápida"]},
-  {id:9,name:"Turim Black Gold",team:"Turim",category:"Europa",season:"2026/27",price:189.9,image:"/products/black-gold.png",color:"Preto / Dourado",description:"Uma peça discreta e elegante para usar dentro e fora do estádio.",details:["Listras douradas finas","Gola reforçada","Toque macio"]},
-  {id:10,name:"Madrid Rojiblanco",team:"Madrid",category:"Europa",season:"2026/27",price:184.9,image:"/products/red-white.png",color:"Vermelho / Branco",description:"Listras clássicas reinterpretadas com acabamento moderno.",details:["Poliéster premium","Costuras reforçadas","Caimento regular"]},
-  {id:11,name:"Miami Pink Night",team:"Miami",category:"Américas",season:"2026",price:194.9,image:"/products/pink-black.png",badge:"Novo",color:"Rosa / Preto",description:"Visual vibrante com gola contrastante e construção leve.",details:["Malha respirável","Modelagem unissex","Detalhes em preto"]},
-  {id:12,name:"Vinho Imperial 1984",team:"Portugal",category:"Retrô",season:"1984",price:209.9,image:"/products/cream-retro.png",badge:"Coleção retrô",color:"Creme / Vinho",description:"Construção inspirada nos mantos europeus dos anos 80.",details:["Gola clássica","Tecido encorpado","Corte vintage"]},
-  {id:13,name:"Canarinho Infantil",team:"Brasil",category:"Infantil",season:"2026",price:149.9,image:"/products/brazil.png",color:"Amarelo / Verde",description:"Kit infantil leve para os pequenos torcedores.",details:["Camisa e short","Tecido confortável","Tamanhos 4 a 14"]},
-  {id:14,name:"Celeste Infantil",team:"Argentina",category:"Infantil",season:"2026",price:149.9,image:"/products/argentina.png",color:"Azul-celeste / Branco",description:"Kit infantil clássico com tecido macio e respirável.",details:["Camisa e short","Costuras suaves","Tamanhos 4 a 14"]},
-  {id:15,name:"Rubro Treino Pro",team:"Rio de Janeiro",category:"Treino",season:"2026",price:159.9,image:"/products/rubro.png",color:"Vermelho / Preto",description:"Camisa leve para treino e uso casual.",details:["Secagem rápida","Corte esportivo","Alta ventilação"]},
-  {id:16,name:"Madrid Treino Gold",team:"Madrid",category:"Treino",season:"2026",price:169.9,image:"/products/white-gold.png",color:"Branco / Dourado",description:"Visual limpo para treino com conforto durante todo o dia.",details:["Tecido leve","Gola anatômica","Costuras planas"]},
-  {id:17,name:"London Blue Feminina",team:"Londres",category:"Feminina",season:"2026/27",price:179.9,image:"/products/blue.png",color:"Azul elétrico",description:"Modelagem feminina com ajuste confortável.",details:["Cintura levemente marcada","Tecido respirável","Grade PP ao GG"]},
-  {id:18,name:"Verde Retrô Feminina",team:"São Paulo",category:"Feminina",season:"1999",price:189.9,image:"/products/green-retro.png",color:"Verde / Creme",description:"Estética retrô em uma modelagem feminina atual.",details:["Gola polo","Tecido encorpado","Grade PP ao GG"]},
+    {
+        id: 1,
+        name: "Manto Rubro 26/27",
+        team: "Rio de Janeiro",
+        category: "Brasileirão",
+        season: "2026/27",
+        price: 189.9,
+        oldPrice: 229.9,
+        image: "/products/rubro.png",
+        badge: "Mais vendida",
+        color: "Vermelho / Preto",
+        description: "Versão torcedor com caimento regular e acabamento premium.",
+        details: ["Tecido respirável de secagem rápida", "Escudo aplicado em alta definição", "Gola canelada com reforço interno"]
+    },
+    {
+        id: 2,
+        name: "Madrid White Player",
+        team: "Madrid",
+        category: "Europa",
+        season: "2026/27",
+        price: 219.9,
+        image: "/products/white-gold.png",
+        badge: "Versão jogador",
+        color: "Branco / Dourado",
+        description: "Modelagem atlética, leve e ajustada ao corpo.",
+        details: ["Tecnologia dry-fit", "Aplicações termocolantes", "Painéis laterais ventilados"]
+    },
+    {
+        id: 3,
+        name: "London Blue Home",
+        team: "Londres",
+        category: "Europa",
+        season: "2026/27",
+        price: 179.9,
+        oldPrice: 199.9,
+        image: "/products/blue.png",
+        color: "Azul elétrico",
+        description: "Visual contemporâneo com textura geométrica tonal.",
+        details: ["Poliéster premium", "Costuras reforçadas", "Toque macio e leve"]
+    },
+    {
+        id: 4,
+        name: "Verde Eterno Retrô",
+        team: "São Paulo",
+        category: "Retrô",
+        season: "1999",
+        price: 199.9,
+        image: "/products/green-retro.png",
+        badge: "Coleção retrô",
+        color: "Verde / Creme",
+        description: "Silhueta clássica dos anos 90 com construção atual.",
+        details: ["Gola polo estruturada", "Tecido encorpado", "Etiqueta comemorativa"]
+    },
+    {
+        id: 5,
+        name: "Brasil Canarinho",
+        team: "Brasil",
+        category: "Seleções",
+        season: "2026",
+        price: 189.9,
+        image: "/products/brazil.png",
+        badge: "Novo",
+        color: "Amarelo / Verde",
+        description: "A energia da seleção em uma peça leve para todos os dias.",
+        details: ["Malha ventilada", "Modelagem unissex", "Barra com acabamento premium"]
+    },
+    {
+        id: 6,
+        name: "Argentina Heritage",
+        team: "Argentina",
+        category: "Seleções",
+        season: "Retrô",
+        price: 209.9,
+        image: "/products/argentina.png",
+        color: "Azul-celeste / Branco",
+        description: "Listras clássicas e gola retrô em uma edição especial.",
+        details: ["Tecido acetinado leve", "Gola contrastante", "Corte clássico"]
+    },
+    {
+        id: 7,
+        name: "Manchester Night Away",
+        team: "Manchester",
+        category: "Europa",
+        season: "2026/27",
+        price: 199.9,
+        image: "/products/navy-orange.png",
+        badge: "Lançamento",
+        color: "Azul-marinho / Laranja",
+        description: "Modelo noturno com recortes diagonais de alto contraste.",
+        details: ["Malha aerada", "Acabamento termocolante", "Modelagem esportiva"]
+    },
+    {
+        id: 8,
+        name: "Firenze Viola Player",
+        team: "Florença",
+        category: "Europa",
+        season: "2026/27",
+        price: 219.9,
+        image: "/products/purple.png",
+        badge: "Versão jogador",
+        color: "Roxo / Prata",
+        description: "Edição de performance com ajuste atlético e tecido ultraleve.",
+        details: ["Painéis respiráveis", "Corte slim", "Tecido de secagem rápida"]
+    },
+    {
+        id: 9,
+        name: "Turim Black Gold",
+        team: "Turim",
+        category: "Europa",
+        season: "2026/27",
+        price: 189.9,
+        image: "/products/black-gold.png",
+        color: "Preto / Dourado",
+        description: "Uma peça discreta e elegante para usar dentro e fora do estádio.",
+        details: ["Listras douradas finas", "Gola reforçada", "Toque macio"]
+    },
+    {
+        id: 10,
+        name: "Madrid Rojiblanco",
+        team: "Madrid",
+        category: "Europa",
+        season: "2026/27",
+        price: 184.9,
+        image: "/products/red-white.png",
+        color: "Vermelho / Branco",
+        description: "Listras clássicas reinterpretadas com acabamento moderno.",
+        details: ["Poliéster premium", "Costuras reforçadas", "Caimento regular"]
+    },
+    {
+        id: 11,
+        name: "Miami Pink Night",
+        team: "Miami",
+        category: "Américas",
+        season: "2026",
+        price: 194.9,
+        image: "/products/pink-black.png",
+        badge: "Novo",
+        color: "Rosa / Preto",
+        description: "Visual vibrante com gola contrastante e construção leve.",
+        details: ["Malha respirável", "Modelagem unissex", "Detalhes em preto"]
+    },
+    {
+        id: 12,
+        name: "Vinho Imperial 1984",
+        team: "Portugal",
+        category: "Retrô",
+        season: "1984",
+        price: 209.9,
+        image: "/products/cream-retro.png",
+        badge: "Coleção retrô",
+        color: "Creme / Vinho",
+        description: "Construção inspirada nos mantos europeus dos anos 80.",
+        details: ["Gola clássica", "Tecido encorpado", "Corte vintage"]
+    },
+    {
+        id: 13,
+        name: "Canarinho Infantil",
+        team: "Brasil",
+        category: "Infantil",
+        season: "2026",
+        price: 149.9,
+        image: "/products/brazil.png",
+        color: "Amarelo / Verde",
+        description: "Kit infantil leve para os pequenos torcedores.",
+        details: ["Camisa e short", "Tecido confortável", "Tamanhos 4 a 14"]
+    },
+    {
+        id: 14,
+        name: "Celeste Infantil",
+        team: "Argentina",
+        category: "Infantil",
+        season: "2026",
+        price: 149.9,
+        image: "/products/argentina.png",
+        color: "Azul-celeste / Branco",
+        description: "Kit infantil clássico com tecido macio e respirável.",
+        details: ["Camisa e short", "Costuras suaves", "Tamanhos 4 a 14"]
+    },
+    {
+        id: 15,
+        name: "Rubro Treino Pro",
+        team: "Rio de Janeiro",
+        category: "Treino",
+        season: "2026",
+        price: 159.9,
+        image: "/products/rubro.png",
+        color: "Vermelho / Preto",
+        description: "Camisa leve para treino e uso casual.",
+        details: ["Secagem rápida", "Corte esportivo", "Alta ventilação"]
+    },
+    {
+        id: 16,
+        name: "Madrid Treino Gold",
+        team: "Madrid",
+        category: "Treino",
+        season: "2026",
+        price: 169.9,
+        image: "/products/white-gold.png",
+        color: "Branco / Dourado",
+        description: "Visual limpo para treino com conforto durante todo o dia.",
+        details: ["Tecido leve", "Gola anatômica", "Costuras planas"]
+    },
+    {
+        id: 17,
+        name: "London Blue Feminina",
+        team: "Londres",
+        category: "Feminina",
+        season: "2026/27",
+        price: 179.9,
+        image: "/products/blue.png",
+        color: "Azul elétrico",
+        description: "Modelagem feminina com ajuste confortável.",
+        details: ["Cintura levemente marcada", "Tecido respirável", "Grade PP ao GG"]
+    },
+    {
+        id: 18,
+        name: "Verde Retrô Feminina",
+        team: "São Paulo",
+        category: "Feminina",
+        season: "1999",
+        price: 189.9,
+        image: "/products/green-retro.png",
+        color: "Verde / Creme",
+        description: "Estética retrô em uma modelagem feminina atual.",
+        details: ["Gola polo", "Tecido encorpado", "Grade PP ao GG"]
+    },
 ];
-const sizes=[{size:"P",chest:"50",length:"69",height:"1,60–1,70 m"},{size:"M",chest:"52",length:"71",height:"1,68–1,78 m"},{size:"G",chest:"55",length:"74",height:"1,75–1,85 m"},{size:"GG",chest:"58",length:"77",height:"1,82–1,92 m"},{size:"3G",chest:"61",length:"80",height:"1,88–2,00 m"}];
-const money=(v:number)=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const sizes = [{size: "P", chest: "50", length: "69", height: "1,60–1,70 m"}, {
+    size: "M",
+    chest: "52",
+    length: "71",
+    height: "1,68–1,78 m"
+}, {size: "G", chest: "55", length: "74", height: "1,75–1,85 m"}, {
+    size: "GG",
+    chest: "58",
+    length: "77",
+    height: "1,82–1,92 m"
+}, {size: "3G", chest: "61", length: "80", height: "1,88–2,00 m"}];
+const money = (v: number) => v.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
 
-export default function Home(){
-  const [query,setQuery]=useState(""); const [category,setCategory]=useState("Todos"); const [selected,setSelected]=useState<Product|null>(null); const [selectedSize,setSelectedSize]=useState("M");
-  const [cart,setCart]=useState<CartItem[]>([]); const [cartOpen,setCartOpen]=useState(false); const [checkoutOpen,setCheckoutOpen]=useState(false); const [trackingOpen,setTrackingOpen]=useState(false);
-  const [trackingCode,setTrackingCode]=useState(""); const [trackingResult,setTrackingResult]=useState<any>(null); const [orderSuccess,setOrderSuccess]=useState<{code:string;city:string;uf:string}|null>(null); const [isSubmitting,setIsSubmitting]=useState(false); const [menuOpen,setMenuOpen]=useState(false);
-  useEffect(()=>{const saved=localStorage.getItem("kitora-cart");if(saved)setCart(JSON.parse(saved))},[]);
-  useEffect(()=>{localStorage.setItem("kitora-cart",JSON.stringify(cart))},[cart]);
-  useEffect(()=>{const context=typeof document!=="undefined"?(document as any).modelContext:undefined;if(!context?.registerTool)return;const controller=new AbortController();Promise.resolve(context.registerTool({name:"search_kitora_catalog",title:"Buscar no catálogo KITORA",description:"Filtra as camisas visíveis por time, nome ou categoria.",inputSchema:{type:"object",properties:{query:{type:"string"}},required:["query"],additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute(input:any){if(typeof input?.query!=="string")throw new Error("query inválida");setQuery(input.query);return{query:input.query,matches:products.filter(p=>`${p.name} ${p.team} ${p.category}`.toLowerCase().includes(input.query.toLowerCase())).length}}},{signal:controller.signal})).catch(()=>{});return()=>controller.abort()},[]);
-  const filtered=useMemo(()=>products.filter(p=>(category==="Todos"||p.category===category)&&`${p.name} ${p.team} ${p.category}`.toLowerCase().includes(query.toLowerCase())),[query,category]);
-  const itemCount=cart.reduce((s,i)=>s+i.quantity,0), subtotal=cart.reduce((s,i)=>s+i.price*i.quantity,0);
-  function addToCart(product:Product,size=selectedSize){setCart(current=>{const found=current.find(i=>i.id===product.id&&i.size===size);return found?current.map(i=>i===found?{...i,quantity:i.quantity+1}:i):[...current,{...product,size,quantity:1}]});toast.success(`${product.name} adicionada ao carrinho`);setSelected(null);setCartOpen(true)}
-  function changeQuantity(id:number,size:string,delta:number){setCart(current=>current.map(i=>i.id===id&&i.size===size?{...i,quantity:i.quantity+delta}:i).filter(i=>i.quantity>0))}
-  async function submitOrder(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setIsSubmitting(true);const form=new FormData(event.currentTarget);const payload=Object.fromEntries(form.entries());try{const response=await fetch("/api/orders",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...payload,total:subtotal,items:cart.map(({id,name,size,quantity,price})=>({id,name,size,quantity,price}))})});if(!response.ok)throw new Error();const data=await response.json();setOrderSuccess({code:data.code,city:String(payload.city),uf:String(payload.uf)});setCart([])}catch{toast.error("Não foi possível concluir agora. Seus itens continuam no carrinho.")}finally{setIsSubmitting(false)}}
-  async function trackOrder(event:React.FormEvent){event.preventDefault();setTrackingResult(null);try{const response=await fetch(`/api/orders?code=${encodeURIComponent(trackingCode)}`);if(!response.ok)throw new Error();setTrackingResult(await response.json())}catch{setTrackingResult({error:true})}}
-  return <div className="min-h-screen bg-[#f5f4ef] text-[#151515]">
-    <Toaster position="top-center" richColors/>
-    <div className="bg-[#141414] px-4 py-2.5 text-center text-xs font-semibold tracking-wide text-white sm:text-sm">FRETE GRÁTIS ACIMA DE R$ 299 · TROCA FÁCIL EM ATÉ 7 DIAS</div>
-    <header className="sticky top-0 z-40 border-b border-black/10 bg-[#f5f4ef]/95 backdrop-blur-xl"><div className="mx-auto flex h-20 max-w-[1440px] items-center gap-5 px-4 sm:px-8">
-      <button className="lg:hidden" aria-label="Abrir menu" onClick={()=>setMenuOpen(!menuOpen)}><Menu/></button><a href="#inicio" className="mr-3 flex items-center gap-2 text-2xl font-black tracking-[-.08em] sm:text-3xl"><span className="grid size-9 place-items-center rounded-full bg-[#ff4d00] text-sm text-white">K</span>KITORA</a>
-      <nav className={`${menuOpen?"flex":"hidden"} absolute left-0 top-full w-full flex-col gap-5 border-b bg-[#f5f4ef] p-5 font-semibold lg:static lg:flex lg:w-auto lg:flex-row lg:border-0 lg:bg-transparent lg:p-0`}><a href="#catalogo">Lançamentos</a><a href="#catalogo">Clubes</a><a href="#catalogo">Seleções</a><a href="#catalogo">Retrô</a></nav>
-      <div className="ml-auto hidden min-w-52 max-w-sm flex-1 items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 md:flex"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Busque por time ou camisa" aria-label="Buscar produtos"/></div>
-      <button onClick={()=>setTrackingOpen(true)} className="hidden items-center gap-2 text-sm font-semibold sm:flex"><PackageCheck size={20}/> Rastrear</button><AccountMenu/><button onClick={()=>setCartOpen(true)} aria-label={`Carrinho com ${itemCount} itens`} className="relative"><ShoppingBag size={23}/>{itemCount>0&&<span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-[#ff4d00] text-[10px] font-bold text-white">{itemCount}</span>}</button>
-    </div></header>
-    <main id="inicio">
-      <section className="hero-grid relative overflow-hidden bg-[#181818] text-white"><div className="mx-auto grid min-h-[530px] max-w-[1440px] items-center gap-8 px-4 py-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
-        <div className="relative z-10 max-w-2xl"><div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm"><Sparkles size={15} className="text-[#ff6b2c]"/> Coleção 26/27 disponível</div><h1 className="text-[clamp(3.4rem,8vw,7.5rem)] font-black leading-[.82] tracking-[-.075em]">VISTA<br/><span className="text-[#ff4d00]">O JOGO.</span></h1><p className="mt-7 max-w-xl text-lg leading-relaxed text-white/70">Camisas para quem carrega o futebol no peito. Modelos atuais, retrôs e versão jogador com detalhes que você vê antes de comprar.</p><div className="mt-8 flex flex-wrap gap-3"><a href="#catalogo" className="inline-flex items-center gap-2 rounded-full bg-[#ff4d00] px-6 py-3.5 font-bold hover:bg-[#ff6324]">Ver camisas <ArrowRight size={18}/></a><button onClick={()=>setTrackingOpen(true)} className="rounded-full border border-white/25 px-6 py-3.5 font-bold hover:bg-white/10">Rastrear pedido</button></div></div>
-        <div className="relative mx-auto h-[370px] w-full max-w-[520px] sm:h-[440px]"><img src="/products/rubro.png" alt="Camisa rubro-negra em destaque" className="absolute left-[2%] top-[8%] h-[88%] w-[62%] rotate-[-8deg] rounded-[2rem] object-cover shadow-2xl"/><img src="/products/white-gold.png" alt="Camisa branca e dourada em destaque" className="absolute right-0 top-[2%] h-[77%] w-[55%] rotate-[7deg] rounded-[2rem] object-cover shadow-2xl"/><div className="absolute bottom-2 right-3 rounded-2xl bg-white p-4 text-[#151515] shadow-xl"><span className="block text-xs font-semibold text-black/50">A PARTIR DE</span><strong className="text-2xl">R$ 179,90</strong></div></div>
-      </div></section>
-      <section className="border-b border-black/10 bg-white"><div className="mx-auto grid max-w-[1440px] grid-cols-2 divide-x divide-black/10 px-4 sm:grid-cols-4 sm:px-8">{[[Truck,"Envio nacional","Prazo calculado por região"],[ShieldCheck,"Compra segura","Seus dados protegidos"],[Zap,"Postagem rápida","Despacho em até 3 dias úteis"],[Heart,"Escolha sem dúvida","Fotos e medidas detalhadas"]].map(([Icon,title,text]:any)=><div key={title} className="flex gap-3 px-3 py-6 sm:px-5"><Icon size={22} className="shrink-0 text-[#ff4d00]"/><div><strong className="block text-sm">{title}</strong><span className="text-xs text-black/50">{text}</span></div></div>)}</div></section>
-      <section id="catalogo" className="mx-auto max-w-[1440px] px-4 py-16 sm:px-8 sm:py-24"><div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="mb-2 text-sm font-bold uppercase tracking-[.18em] text-[#ff4d00]">Escolha seu manto</p><h2 className="text-4xl font-black tracking-[-.045em] sm:text-6xl">18 MODELOS</h2></div><div className="flex gap-2 overflow-x-auto pb-1">{["Todos","Brasileirão","Europa","Seleções","Retrô","Américas","Infantil","Treino","Feminina"].map(c=><button key={c} onClick={()=>setCategory(c)} className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold ${category===c?"border-[#151515] bg-[#151515] text-white":"border-black/15 bg-white hover:border-black"}`}>{c}</button>)}</div></div>
-        <div className="mb-7 flex items-center rounded-xl border border-black/10 bg-white px-4 py-3 md:hidden"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} className="ml-2 w-full bg-transparent outline-none" placeholder="Busque por time ou camisa"/></div>
-        {filtered.length?<div className="grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">{filtered.map(product=><article key={product.id} className="group"><button onClick={()=>{setSelected(product);setSelectedSize("M")}} className="relative block aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] bg-[#deddd7] text-left">{product.badge&&<span className="absolute left-3 top-3 z-10 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide">{product.badge}</span>}<img src={product.image} alt={product.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"/><span className="absolute bottom-3 left-3 right-3 translate-y-4 rounded-full bg-white px-4 py-3 text-center text-sm font-bold opacity-0 shadow-lg transition group-hover:translate-y-0 group-hover:opacity-100">Ver detalhes</span></button><div className="pt-4"><p className="text-xs font-semibold uppercase tracking-wide text-black/45">{product.category} · {product.season}</p><button onClick={()=>setSelected(product)} className="mt-1 text-left text-base font-bold sm:text-lg">{product.name}</button><div className="mt-2 flex flex-wrap items-baseline gap-2"><strong>{money(product.price)}</strong>{product.oldPrice&&<del className="text-sm text-black/40">{money(product.oldPrice)}</del>}<span className="w-full text-xs text-black/50">ou 4x de {money(product.price/4)}</span></div></div></article>)}</div>:<div className="rounded-3xl border border-dashed border-black/20 bg-white p-12 text-center"><Search className="mx-auto mb-3 text-black/30"/><h3 className="text-xl font-bold">Nenhuma camisa encontrada</h3><button onClick={()=>{setQuery("");setCategory("Todos")}} className="mt-3 text-sm font-bold text-[#ff4d00]">Limpar busca</button></div>}
-      </section>
-      <section className="bg-[#ff4d00] px-4 py-16 text-white sm:px-8"><div className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-7 md:flex-row md:items-center"><div><p className="text-sm font-bold uppercase tracking-[.18em] text-white/70">Não erre o tamanho</p><h2 className="mt-2 max-w-3xl text-4xl font-black leading-none tracking-[-.05em] sm:text-6xl">MEÇA UMA CAMISA QUE JÁ VESTE BEM.</h2></div><button onClick={()=>setSelected(products[0])} className="shrink-0 rounded-full bg-white px-6 py-3.5 font-bold text-[#151515]">Abrir guia de medidas</button></div></section>
-    </main>
-    <footer className="bg-[#111] px-4 py-12 text-white sm:px-8"><div className="mx-auto grid max-w-[1440px] gap-8 md:grid-cols-3"><div><div className="text-3xl font-black tracking-[-.08em]">KITORA</div><p className="mt-3 max-w-sm text-sm text-white/55">Futebol se veste. Escolha seu próximo manto com confiança.</p></div><div><strong>ATENDIMENTO</strong><p className="mt-3 text-sm text-white/55">Segunda a sexta, 9h às 18h<br/>contato@kitora.com.br</p></div><div><strong>COMPRA SEGURA</strong><p className="mt-3 text-sm text-white/55">Ambiente protegido e acompanhamento do pedido do início ao fim.</p></div></div><div className="mx-auto mt-10 max-w-[1440px] border-t border-white/10 pt-5 text-xs text-white/35">© 2026 KITORA. Imagens ilustrativas. Marcas pertencem aos seus respectivos proprietários.</div></footer>
-    <Dialog open={!!selected} onOpenChange={open=>!open&&setSelected(null)}><DialogContent className="max-h-[92vh] overflow-y-auto border-0 p-0 sm:max-w-5xl">{selected&&<div className="grid md:grid-cols-2"><div className="min-h-[380px] bg-[#dddcd6]"><img src={selected.image} alt={selected.name} className="h-full min-h-[380px] w-full object-cover"/></div><div className="p-6 sm:p-9"><DialogHeader><p className="text-xs font-bold uppercase tracking-[.16em] text-[#ff4d00]">{selected.category} · {selected.season}</p><DialogTitle className="text-3xl font-black tracking-tight">{selected.name}</DialogTitle><DialogDescription className="text-base">{selected.description}</DialogDescription></DialogHeader><div className="mt-5 text-2xl font-black">{money(selected.price)} <span className="text-sm font-normal text-black/45">em até 4x sem juros</span></div>
-      <Tabs defaultValue="produto" className="mt-6"><TabsList className="w-full"><TabsTrigger value="produto">Detalhes</TabsTrigger><TabsTrigger value="medidas">Medidas</TabsTrigger><TabsTrigger value="entrega">Entrega</TabsTrigger></TabsList><TabsContent value="produto" className="pt-4"><p className="mb-3 text-sm font-semibold">Cor: {selected.color}</p><ul className="space-y-2 text-sm text-black/65">{selected.details.map(d=><li key={d} className="flex gap-2"><Check size={17} className="text-[#ff4d00]"/>{d}</li>)}</ul></TabsContent><TabsContent value="medidas" className="pt-4"><p className="mb-3 text-sm text-black/60">Medidas aproximadas em centímetros, feitas com a peça aberta.</p><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b"><th className="py-2">Tam.</th><th>Peito</th><th>Comp.</th><th>Altura sugerida</th></tr></thead><tbody>{sizes.map(s=><tr key={s.size} className="border-b border-black/10"><td className="py-2 font-bold">{s.size}</td><td>{s.chest}</td><td>{s.length}</td><td>{s.height}</td></tr>)}</tbody></table></div></TabsContent><TabsContent value="entrega" className="pt-4"><div className="rounded-xl bg-[#f1f0eb] p-4 text-sm"><strong className="flex items-center gap-2"><Truck size={18}/> Envio para todo o Brasil</strong><p className="mt-2 text-black/60">O prazo e o frete são calculados no checkout conforme seu CEP e região.</p></div></TabsContent></Tabs>
-      <div className="mt-7"><div className="mb-2 flex justify-between text-sm font-bold"><span>Escolha o tamanho</span><span className="text-black/45">Modelagem regular</span></div><div className="grid grid-cols-5 gap-2">{sizes.map(s=><button key={s.size} onClick={()=>setSelectedSize(s.size)} className={`rounded-xl border py-3 font-bold ${selectedSize===s.size?"border-[#151515] bg-[#151515] text-white":"border-black/15"}`}>{s.size}</button>)}</div></div><button onClick={()=>addToCart(selected)} className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#ff4d00] py-4 font-bold text-white hover:bg-[#e84600]"><ShoppingBag size={19}/> Adicionar ao carrinho</button></div></div>}</DialogContent></Dialog>
-    <Sheet open={cartOpen} onOpenChange={setCartOpen}><SheetContent className="w-full gap-0 bg-[#f5f4ef] sm:max-w-md"><SheetHeader className="border-b border-black/10 p-6"><SheetTitle className="text-2xl font-black">SEU CARRINHO <span className="text-black/35">({itemCount})</span></SheetTitle><SheetDescription>Revise tamanhos e quantidades.</SheetDescription></SheetHeader><div className="flex-1 overflow-y-auto p-6">{cart.length?<div className="space-y-5">{cart.map(item=><div key={`${item.id}-${item.size}`} className="flex gap-4"><img src={item.image} alt="" className="h-28 w-24 rounded-xl object-cover"/><div className="flex-1"><strong className="block">{item.name}</strong><span className="text-sm text-black/50">Tamanho {item.size}</span><div className="mt-4 flex items-center justify-between"><div className="flex items-center rounded-full border border-black/15 bg-white"><button onClick={()=>changeQuantity(item.id,item.size,-1)} className="p-2" aria-label="Diminuir"><Minus size={14}/></button><span className="w-7 text-center text-sm font-bold">{item.quantity}</span><button onClick={()=>changeQuantity(item.id,item.size,1)} className="p-2" aria-label="Aumentar"><Plus size={14}/></button></div><strong>{money(item.price*item.quantity)}</strong></div></div></div>)}</div>:<div className="grid h-full place-items-center text-center"><div><ShoppingBag className="mx-auto mb-4 size-12 text-black/25"/><h3 className="text-xl font-bold">Seu carrinho está vazio</h3><p className="mt-2 text-sm text-black/50">Escolha uma camisa para começar.</p></div></div>}</div>{cart.length>0&&<div className="border-t border-black/10 bg-white p-6"><div className="mb-2 flex justify-between text-sm"><span>Subtotal</span><strong>{money(subtotal)}</strong></div><p className="mb-4 text-xs text-black/45">Frete calculado na próxima etapa.</p><button onClick={()=>{setCartOpen(false);setCheckoutOpen(true)}} className="flex w-full items-center justify-center gap-2 rounded-full bg-[#151515] py-4 font-bold text-white">Finalizar pedido <ArrowRight size={18}/></button></div>}</SheetContent></Sheet>
-    <Dialog open={checkoutOpen} onOpenChange={open=>{setCheckoutOpen(open);if(!open)setOrderSuccess(null)}}><DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl"><DialogHeader><DialogTitle className="text-2xl font-black">FINALIZAR PEDIDO</DialogTitle><DialogDescription>{orderSuccess?"Pedido confirmado e pronto para acompanhamento.":"Preencha a entrega. O prazo será definido pela sua localização."}</DialogDescription></DialogHeader>{orderSuccess?<div className="py-6 text-center"><div className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-100 text-emerald-700"><Check size={32}/></div><h3 className="mt-5 text-2xl font-black">Pedido recebido!</h3><p className="mt-2 text-black/55">Entrega destinada a {orderSuccess.city}/{orderSuccess.uf}.</p><div className="mx-auto mt-5 max-w-sm rounded-2xl bg-[#f1f0eb] p-5"><span className="text-xs font-bold uppercase tracking-wide text-black/45">Código de rastreio</span><strong className="mt-1 block text-2xl tracking-widest">{orderSuccess.code}</strong></div><button onClick={()=>{setTrackingCode(orderSuccess.code);setCheckoutOpen(false);setTrackingOpen(true)}} className="mt-6 rounded-full bg-[#ff4d00] px-6 py-3 font-bold text-white">Acompanhar entrega</button></div>:<form onSubmit={submitOrder} className="space-y-5"><div className="grid gap-4 sm:grid-cols-2"><label className="sm:col-span-2">Nome completo<input name="name" required className="input" placeholder="Como receberá o pedido"/></label><label>E-mail<input name="email" required type="email" className="input" placeholder="voce@email.com"/></label><label>Telefone<input name="phone" required className="input" placeholder="(61) 99999-9999"/></label><label>CEP<input name="cep" required className="input" placeholder="00000-000"/></label><label>Estado<select name="uf" required className="input"><option value="">Selecione</option>{["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf=><option key={uf}>{uf}</option>)}</select></label><label>Cidade<input name="city" required className="input"/></label><label>Bairro<input name="district" required className="input"/></label><label className="sm:col-span-2">Endereço<input name="address" required className="input" placeholder="Rua, número e complemento"/></label></div><div className="rounded-2xl bg-[#f1f0eb] p-4"><div className="flex items-center gap-3"><CreditCard className="text-[#ff4d00]"/><div><strong className="block text-sm">Pagamento demonstrativo</strong><span className="text-xs text-black/50">Pix e cartão serão conectados na operação real.</span></div></div></div><div className="flex items-center justify-between border-t pt-4"><span className="font-semibold">Total dos produtos</span><strong className="text-xl">{money(subtotal)}</strong></div><button disabled={isSubmitting} className="w-full rounded-full bg-[#ff4d00] py-4 font-bold text-white disabled:opacity-50">{isSubmitting?"Confirmando…":"Confirmar pedido"}</button></form>}</DialogContent></Dialog>
-    <Dialog open={trackingOpen} onOpenChange={setTrackingOpen}><DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle className="text-2xl font-black">RASTREAR PEDIDO</DialogTitle><DialogDescription>Digite o código recebido ao concluir a compra.</DialogDescription></DialogHeader><form onSubmit={trackOrder} className="flex gap-2"><input value={trackingCode} onChange={e=>setTrackingCode(e.target.value.toUpperCase())} className="input mt-0 flex-1 uppercase" placeholder="KIT-000000" required/><button className="rounded-xl bg-[#151515] px-5 font-bold text-white">Buscar</button></form>{trackingResult?.error&&<div className="rounded-xl bg-red-50 p-4 text-sm text-red-700">Código não encontrado. Confira e tente novamente.</div>}{trackingResult&&!trackingResult.error&&<div className="rounded-2xl bg-[#f1f0eb] p-5"><div className="flex justify-between gap-4"><div><span className="text-xs font-bold uppercase text-black/45">Destino</span><strong className="block">{trackingResult.city}/{trackingResult.uf}</strong></div><div className="text-right"><span className="text-xs font-bold uppercase text-black/45">Previsão</span><strong className="block">{trackingResult.estimate}</strong></div></div><Progress value={trackingResult.progress} className="mt-6"/><div className="mt-5 space-y-4">{trackingResult.steps.map((step:any,i:number)=><div key={step.label} className={`flex gap-3 ${i>trackingResult.currentStep?"opacity-35":""}`}><div className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-full ${i<=trackingResult.currentStep?"bg-[#ff4d00] text-white":"border border-black/20"}`}>{i<=trackingResult.currentStep?<Check size={15}/>:i+1}</div><div><strong className="text-sm">{step.label}</strong><p className="text-xs text-black/50">{step.detail}</p></div></div>)}</div></div>}</DialogContent></Dialog>
-  </div>
+export default function Home() {
+    const [query, setQuery] = useState("");
+    const [category, setCategory] = useState("Todos");
+    const [selected, setSelected] = useState<Product | null>(null);
+    const [selectedSize, setSelectedSize] = useState("M");
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [cartOpen, setCartOpen] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
+    const [trackingOpen, setTrackingOpen] = useState(false);
+    const [trackingCode, setTrackingCode] = useState("");
+    const [trackingResult, setTrackingResult] = useState<any>(null);
+    const [orderSuccess, setOrderSuccess] = useState<{ code: string; city: string; uf: string } | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    useEffect(() => {
+        const saved = localStorage.getItem("kitora-cart");
+        if (saved) setCart(JSON.parse(saved))
+    }, []);
+    useEffect(() => {
+        localStorage.setItem("kitora-cart", JSON.stringify(cart))
+    }, [cart]);
+    useEffect(() => {
+        const context = typeof document !== "undefined" ? (document as any).modelContext : undefined;
+        if (!context?.registerTool) return;
+        const controller = new AbortController();
+        Promise.resolve(context.registerTool({
+            name: "search_kitora_catalog",
+            title: "Buscar no catálogo KITORA",
+            description: "Filtra as camisas visíveis por time, nome ou categoria.",
+            inputSchema: {
+                type: "object",
+                properties: {query: {type: "string"}},
+                required: ["query"],
+                additionalProperties: false
+            },
+            annotations: {readOnlyHint: true, untrustedContentHint: false},
+            execute(input: any) {
+                if (typeof input?.query !== "string") throw new Error("query inválida");
+                setQuery(input.query);
+                return {
+                    query: input.query,
+                    matches: products.filter(p => `${p.name} ${p.team} ${p.category}`.toLowerCase().includes(input.query.toLowerCase())).length
+                }
+            }
+        }, {signal: controller.signal})).catch(() => {
+        });
+        return () => controller.abort()
+    }, []);
+    const filtered = useMemo(() => products.filter(p => (category === "Todos" || p.category === category) && `${p.name} ${p.team} ${p.category}`.toLowerCase().includes(query.toLowerCase())), [query, category]);
+    const itemCount = cart.reduce((s, i) => s + i.quantity, 0),
+        subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+    function addToCart(product: Product, size = selectedSize) {
+        setCart(current => {
+            const found = current.find(i => i.id === product.id && i.size === size);
+            return found ? current.map(i => i === found ? {
+                ...i,
+                quantity: i.quantity + 1
+            } : i) : [...current, {...product, size, quantity: 1}]
+        });
+        toast.success(`${product.name} adicionada ao carrinho`);
+        setSelected(null);
+        setCartOpen(true)
+    }
+
+    function changeQuantity(id: number, size: string, delta: number) {
+        setCart(current => current.map(i => i.id === id && i.size === size ? {
+            ...i,
+            quantity: i.quantity + delta
+        } : i).filter(i => i.quantity > 0))
+    }
+
+    async function submitOrder(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setIsSubmitting(true);
+        const form = new FormData(event.currentTarget);
+        const payload = Object.fromEntries(form.entries());
+        try {
+            const response = await fetch("/api/orders", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    ...payload,
+                    total: subtotal,
+                    items: cart.map(({id, name, size, quantity, price}) => ({id, name, size, quantity, price}))
+                })
+            });
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            setOrderSuccess({code: data.code, city: String(payload.city), uf: String(payload.uf)});
+            setCart([])
+        } catch {
+            toast.error("Não foi possível concluir agora. Seus itens continuam no carrinho.")
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    async function trackOrder(event: React.FormEvent) {
+        event.preventDefault();
+        setTrackingResult(null);
+        try {
+            const response = await fetch(`/api/orders?code=${encodeURIComponent(trackingCode)}`);
+            if (!response.ok) throw new Error();
+            setTrackingResult(await response.json())
+        } catch {
+            setTrackingResult({error: true})
+        }
+    }
+
+    return <div className="min-h-screen bg-[#f5f4ef] text-[#151515]">
+        <Toaster position="top-center" richColors/>
+        <div
+            className="bg-[#141414] px-4 py-2.5 text-center text-xs font-semibold tracking-wide text-white sm:text-sm">FRETE
+            GRÁTIS ACIMA DE R$ 299 · TROCA FÁCIL EM ATÉ 7 DIAS
+        </div>
+        <header className="sticky top-0 z-40 border-b border-black/10 bg-[#f5f4ef]/95 backdrop-blur-xl">
+            <div className="mx-auto flex h-20 max-w-[1440px] items-center gap-5 px-4 sm:px-8">
+                <button className="lg:hidden" aria-label="Abrir menu" onClick={() => setMenuOpen(!menuOpen)}><Menu/>
+                </button>
+                <a href="#inicio"
+                   className="mr-3 flex items-center gap-2 text-2xl font-black tracking-[-.08em] sm:text-3xl"><a
+                    href="#inicio"
+                    className="mr-3 flex items-center gap-2 text-2xl font-black tracking-[-.08em] sm:text-3xl"
+                >
+                  <img
+                      src="/favicon.svg"
+                      alt="DECO"
+                      className="size-9"
+                  />
+
+                  DECO
+                </a>
+                </a>
+                <nav
+                    className={`${menuOpen ? "flex" : "hidden"} absolute left-0 top-full w-full flex-col gap-5 border-b bg-[#f5f4ef] p-5 font-semibold lg:static lg:flex lg:w-auto lg:flex-row lg:border-0 lg:bg-transparent lg:p-0`}>
+                    <a href="#catalogo">Lançamentos</a><a href="#catalogo">Clubes</a><a href="#catalogo">Seleções</a><a
+                    href="#catalogo">Retrô</a></nav>
+                <div
+                    className="ml-auto hidden min-w-52 max-w-sm flex-1 items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 md:flex">
+                    <Search size={18}/><input value={query} onChange={e => setQuery(e.target.value)}
+                                              className="w-full bg-transparent text-sm outline-none"
+                                              placeholder="Busque por time ou camisa" aria-label="Buscar produtos"/>
+                </div>
+                <button onClick={() => setTrackingOpen(true)}
+                        className="hidden items-center gap-2 text-sm font-semibold sm:flex"><PackageCheck
+                    size={20}/> Rastrear
+                </button>
+                <AccountMenu/>
+                <button onClick={() => setCartOpen(true)} aria-label={`Carrinho com ${itemCount} itens`}
+                        className="relative"><ShoppingBag size={23}/>{itemCount > 0 && <span
+                    className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-[#ff4d00] text-[10px] font-bold text-white">{itemCount}</span>}
+                </button>
+            </div>
+        </header>
+        <main id="inicio">
+            <section className="hero-grid relative overflow-hidden bg-[#181818] text-white">
+                <div
+                    className="mx-auto grid min-h-[530px] max-w-[1440px] items-center gap-8 px-4 py-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
+                    <div className="relative z-10 max-w-2xl">
+                        <div
+                            className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm">
+                            <Sparkles size={15} className="text-[#ff6b2c]"/> Coleção 26/27 disponível
+                        </div>
+                        <h1 className="text-[clamp(3.4rem,8vw,7.5rem)] font-black leading-[.82] tracking-[-.075em]">VISTA<br/><span
+                            className="text-[#ff4d00]">O JOGO.</span></h1><p
+                        className="mt-7 max-w-xl text-lg leading-relaxed text-white/70">Camisas para quem carrega o
+                        futebol no peito. Modelos atuais, retrôs e versão jogador com detalhes que você vê antes de
+                        comprar.</p>
+                        <div className="mt-8 flex flex-wrap gap-3"><a href="#catalogo"
+                                                                      className="inline-flex items-center gap-2 rounded-full bg-[#ff4d00] px-6 py-3.5 font-bold hover:bg-[#ff6324]">Ver
+                            camisas <ArrowRight size={18}/></a>
+                            <button onClick={() => setTrackingOpen(true)}
+                                    className="rounded-full border border-white/25 px-6 py-3.5 font-bold hover:bg-white/10">Rastrear
+                                pedido
+                            </button>
+                        </div>
+                    </div>
+                    <div className="relative mx-auto h-[370px] w-full max-w-[520px] sm:h-[440px]"><img
+                        src="/products/rubro.png" alt="Camisa rubro-negra em destaque"
+                        className="absolute left-[2%] top-[8%] h-[88%] w-[62%] rotate-[-8deg] rounded-[2rem] object-cover shadow-2xl"/><img
+                        src="/products/white-gold.png" alt="Camisa branca e dourada em destaque"
+                        className="absolute right-0 top-[2%] h-[77%] w-[55%] rotate-[7deg] rounded-[2rem] object-cover shadow-2xl"/>
+                        <div className="absolute bottom-2 right-3 rounded-2xl bg-white p-4 text-[#151515] shadow-xl">
+                            <span className="block text-xs font-semibold text-black/50">A PARTIR DE</span><strong
+                            className="text-2xl">R$ 179,90</strong></div>
+                    </div>
+                </div>
+            </section>
+            <section className="border-b border-black/10 bg-white">
+                <div
+                    className="mx-auto grid max-w-[1440px] grid-cols-2 divide-x divide-black/10 px-4 sm:grid-cols-4 sm:px-8">{[[Truck, "Envio nacional", "Prazo calculado por região"], [ShieldCheck, "Compra segura", "Seus dados protegidos"], [Zap, "Postagem rápida", "Despacho em até 3 dias úteis"], [Heart, "Escolha sem dúvida", "Fotos e medidas detalhadas"]].map(([Icon, title, text]: any) =>
+                    <div key={title} className="flex gap-3 px-3 py-6 sm:px-5"><Icon size={22}
+                                                                                    className="shrink-0 text-[#ff4d00]"/>
+                        <div><strong className="block text-sm">{title}</strong><span
+                            className="text-xs text-black/50">{text}</span></div>
+                    </div>)}</div>
+            </section>
+            <section id="catalogo" className="mx-auto max-w-[1440px] px-4 py-16 sm:px-8 sm:py-24">
+                <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                    <div><p className="mb-2 text-sm font-bold uppercase tracking-[.18em] text-[#ff4d00]">Escolha seu
+                        manto</p><h2 className="text-4xl font-black tracking-[-.045em] sm:text-6xl">18 MODELOS</h2>
+                    </div>
+                    <div
+                        className="flex gap-2 overflow-x-auto pb-1">{["Todos", "Brasileirão", "Europa", "Seleções", "Retrô", "Américas", "Infantil", "Treino", "Feminina"].map(c =>
+                        <button key={c} onClick={() => setCategory(c)}
+                                className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold ${category === c ? "border-[#151515] bg-[#151515] text-white" : "border-black/15 bg-white hover:border-black"}`}>{c}</button>)}</div>
+                </div>
+                <div className="mb-7 flex items-center rounded-xl border border-black/10 bg-white px-4 py-3 md:hidden">
+                    <Search size={18}/><input value={query} onChange={e => setQuery(e.target.value)}
+                                              className="ml-2 w-full bg-transparent outline-none"
+                                              placeholder="Busque por time ou camisa"/></div>
+                {filtered.length ? <div
+                        className="grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">{filtered.map(product =>
+                        <article key={product.id} className="group">
+                            <button onClick={() => {
+                                setSelected(product);
+                                setSelectedSize("M")
+                            }}
+                                    className="relative block aspect-[4/5] w-full overflow-hidden rounded-[1.35rem] bg-[#deddd7] text-left">{product.badge &&
+                                <span
+                                    className="absolute left-3 top-3 z-10 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide">{product.badge}</span>}<img
+                                src={product.image} alt={product.name}
+                                className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"/><span
+                                className="absolute bottom-3 left-3 right-3 translate-y-4 rounded-full bg-white px-4 py-3 text-center text-sm font-bold opacity-0 shadow-lg transition group-hover:translate-y-0 group-hover:opacity-100">Ver detalhes</span>
+                            </button>
+                            <div className="pt-4"><p
+                                className="text-xs font-semibold uppercase tracking-wide text-black/45">{product.category} · {product.season}</p>
+                                <button onClick={() => setSelected(product)}
+                                        className="mt-1 text-left text-base font-bold sm:text-lg">{product.name}</button>
+                                <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                                    <strong>{money(product.price)}</strong>{product.oldPrice &&
+                                    <del className="text-sm text-black/40">{money(product.oldPrice)}</del>}<span
+                                    className="w-full text-xs text-black/50">ou 4x de {money(product.price / 4)}</span>
+                                </div>
+                            </div>
+                        </article>)}</div> :
+                    <div className="rounded-3xl border border-dashed border-black/20 bg-white p-12 text-center"><Search
+                        className="mx-auto mb-3 text-black/30"/><h3 className="text-xl font-bold">Nenhuma camisa
+                        encontrada</h3>
+                        <button onClick={() => {
+                            setQuery("");
+                            setCategory("Todos")
+                        }} className="mt-3 text-sm font-bold text-[#ff4d00]">Limpar busca
+                        </button>
+                    </div>}
+            </section>
+            <section className="bg-[#ff4d00] px-4 py-16 text-white sm:px-8">
+                <div
+                    className="mx-auto flex max-w-[1440px] flex-col items-start justify-between gap-7 md:flex-row md:items-center">
+                    <div><p className="text-sm font-bold uppercase tracking-[.18em] text-white/70">Não erre o
+                        tamanho</p><h2
+                        className="mt-2 max-w-3xl text-4xl font-black leading-none tracking-[-.05em] sm:text-6xl">MEÇA
+                        UMA CAMISA QUE JÁ VESTE BEM.</h2></div>
+                    <button onClick={() => setSelected(products[0])}
+                            className="shrink-0 rounded-full bg-white px-6 py-3.5 font-bold text-[#151515]">Abrir guia
+                        de medidas
+                    </button>
+                </div>
+            </section>
+        </main>
+        <footer className="bg-[#111] px-4 py-12 text-white sm:px-8">
+            <div className="mx-auto grid max-w-[1440px] gap-8 md:grid-cols-3">
+                <div>
+                    <div className="text-3xl font-black tracking-[-.08em]"><BrandLogo /></div>
+                    <p className="mt-3 max-w-sm text-sm text-white/55">Futebol se veste. Escolha seu próximo manto com
+                        confiança.</p></div>
+                <div><strong>ATENDIMENTO</strong><p className="mt-3 text-sm text-white/55">Segunda a sexta, 9h às
+                    18h<br/>contato@kitora.com.br</p></div>
+                <div><strong>COMPRA SEGURA</strong><p className="mt-3 text-sm text-white/55">Ambiente protegido e
+                    acompanhamento do pedido do início ao fim.</p></div>
+            </div>
+            <div className="mx-auto mt-10 max-w-[1440px] border-t border-white/10 pt-5 text-xs text-white/35">© 2026
+                DECO. Imagens ilustrativas. Marcas pertencem aos seus respectivos proprietários.
+            </div>
+        </footer>
+        <Dialog open={!!selected} onOpenChange={open => !open && setSelected(null)}><DialogContent
+            className="max-h-[92vh] overflow-y-auto border-0 p-0 sm:max-w-5xl">{selected &&
+            <div className="grid md:grid-cols-2">
+                <div className="min-h-[380px] bg-[#dddcd6]"><img src={selected.image} alt={selected.name}
+                                                                 className="h-full min-h-[380px] w-full object-cover"/>
+                </div>
+                <div className="p-6 sm:p-9"><DialogHeader><p
+                    className="text-xs font-bold uppercase tracking-[.16em] text-[#ff4d00]">{selected.category} · {selected.season}</p>
+                    <DialogTitle
+                        className="text-3xl font-black tracking-tight">{selected.name}</DialogTitle><DialogDescription
+                        className="text-base">{selected.description}</DialogDescription></DialogHeader>
+                    <div className="mt-5 text-2xl font-black">{money(selected.price)} <span
+                        className="text-sm font-normal text-black/45">em até 4x sem juros</span></div>
+                    <Tabs defaultValue="produto" className="mt-6"><TabsList className="w-full"><TabsTrigger
+                        value="produto">Detalhes</TabsTrigger><TabsTrigger
+                        value="medidas">Medidas</TabsTrigger><TabsTrigger
+                        value="entrega">Entrega</TabsTrigger></TabsList><TabsContent value="produto" className="pt-4"><p
+                        className="mb-3 text-sm font-semibold">Cor: {selected.color}</p>
+                        <ul className="space-y-2 text-sm text-black/65">{selected.details.map(d => <li key={d}
+                                                                                                       className="flex gap-2">
+                            <Check size={17} className="text-[#ff4d00]"/>{d}</li>)}</ul>
+                    </TabsContent><TabsContent value="medidas" className="pt-4"><p
+                        className="mb-3 text-sm text-black/60">Medidas aproximadas em centímetros, feitas com a peça
+                        aberta.</p>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm">
+                                <thead>
+                                <tr className="border-b">
+                                    <th className="py-2">Tam.</th>
+                                    <th>Peito</th>
+                                    <th>Comp.</th>
+                                    <th>Altura sugerida</th>
+                                </tr>
+                                </thead>
+                                <tbody>{sizes.map(s => <tr key={s.size} className="border-b border-black/10">
+                                    <td className="py-2 font-bold">{s.size}</td>
+                                    <td>{s.chest}</td>
+                                    <td>{s.length}</td>
+                                    <td>{s.height}</td>
+                                </tr>)}</tbody>
+                            </table>
+                        </div>
+                    </TabsContent><TabsContent value="entrega" className="pt-4">
+                        <div className="rounded-xl bg-[#f1f0eb] p-4 text-sm"><strong
+                            className="flex items-center gap-2"><Truck size={18}/> Envio para todo o Brasil</strong><p
+                            className="mt-2 text-black/60">O prazo e o frete são calculados no checkout conforme seu CEP
+                            e região.</p></div>
+                    </TabsContent></Tabs>
+                    <div className="mt-7">
+                        <div className="mb-2 flex justify-between text-sm font-bold"><span>Escolha o tamanho</span><span
+                            className="text-black/45">Modelagem regular</span></div>
+                        <div className="grid grid-cols-5 gap-2">{sizes.map(s => <button key={s.size}
+                                                                                        onClick={() => setSelectedSize(s.size)}
+                                                                                        className={`rounded-xl border py-3 font-bold ${selectedSize === s.size ? "border-[#151515] bg-[#151515] text-white" : "border-black/15"}`}>{s.size}</button>)}</div>
+                    </div>
+                    <button onClick={() => addToCart(selected)}
+                            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#ff4d00] py-4 font-bold text-white hover:bg-[#e84600]">
+                        <ShoppingBag size={19}/> Adicionar ao carrinho
+                    </button>
+                </div>
+            </div>}</DialogContent></Dialog>
+        <Sheet open={cartOpen} onOpenChange={setCartOpen}><SheetContent
+            className="w-full gap-0 bg-[#f5f4ef] sm:max-w-md"><SheetHeader
+            className="border-b border-black/10 p-6"><SheetTitle className="text-2xl font-black">SEU CARRINHO <span
+            className="text-black/35">({itemCount})</span></SheetTitle><SheetDescription>Revise tamanhos e
+            quantidades.</SheetDescription></SheetHeader>
+            <div className="flex-1 overflow-y-auto p-6">{cart.length ?
+                <div className="space-y-5">{cart.map(item => <div key={`${item.id}-${item.size}`}
+                                                                  className="flex gap-4"><img src={item.image} alt=""
+                                                                                              className="h-28 w-24 rounded-xl object-cover"/>
+                    <div className="flex-1"><strong className="block">{item.name}</strong><span
+                        className="text-sm text-black/50">Tamanho {item.size}</span>
+                        <div className="mt-4 flex items-center justify-between">
+                            <div className="flex items-center rounded-full border border-black/15 bg-white">
+                                <button onClick={() => changeQuantity(item.id, item.size, -1)} className="p-2"
+                                        aria-label="Diminuir"><Minus size={14}/></button>
+                                <span className="w-7 text-center text-sm font-bold">{item.quantity}</span>
+                                <button onClick={() => changeQuantity(item.id, item.size, 1)} className="p-2"
+                                        aria-label="Aumentar"><Plus size={14}/></button>
+                            </div>
+                            <strong>{money(item.price * item.quantity)}</strong></div>
+                    </div>
+                </div>)}</div> : <div className="grid h-full place-items-center text-center">
+                    <div><ShoppingBag className="mx-auto mb-4 size-12 text-black/25"/><h3
+                        className="text-xl font-bold">Seu carrinho está vazio</h3><p
+                        className="mt-2 text-sm text-black/50">Escolha uma camisa para começar.</p></div>
+                </div>}</div>
+            {cart.length > 0 && <div className="border-t border-black/10 bg-white p-6">
+                <div className="mb-2 flex justify-between text-sm">
+                    <span>Subtotal</span><strong>{money(subtotal)}</strong></div>
+                <p className="mb-4 text-xs text-black/45">Frete calculado na próxima etapa.</p>
+                <button onClick={() => {
+                    setCartOpen(false);
+                    setCheckoutOpen(true)
+                }}
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-[#151515] py-4 font-bold text-white">Finalizar
+                    pedido <ArrowRight size={18}/></button>
+            </div>}</SheetContent></Sheet>
+        <Dialog open={checkoutOpen} onOpenChange={open => {
+            setCheckoutOpen(open);
+            if (!open) setOrderSuccess(null)
+        }}><DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl"><DialogHeader><DialogTitle
+            className="text-2xl font-black">FINALIZAR
+            PEDIDO</DialogTitle><DialogDescription>{orderSuccess ? "Pedido confirmado e pronto para acompanhamento." : "Preencha a entrega. O prazo será definido pela sua localização."}</DialogDescription></DialogHeader>{orderSuccess ?
+            <div className="py-6 text-center">
+                <div className="mx-auto grid size-16 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+                    <Check size={32}/></div>
+                <h3 className="mt-5 text-2xl font-black">Pedido recebido!</h3><p className="mt-2 text-black/55">Entrega
+                destinada a {orderSuccess.city}/{orderSuccess.uf}.</p>
+                <div className="mx-auto mt-5 max-w-sm rounded-2xl bg-[#f1f0eb] p-5"><span
+                    className="text-xs font-bold uppercase tracking-wide text-black/45">Código de rastreio</span><strong
+                    className="mt-1 block text-2xl tracking-widest">{orderSuccess.code}</strong></div>
+                <button onClick={() => {
+                    setTrackingCode(orderSuccess.code);
+                    setCheckoutOpen(false);
+                    setTrackingOpen(true)
+                }} className="mt-6 rounded-full bg-[#ff4d00] px-6 py-3 font-bold text-white">Acompanhar entrega
+                </button>
+            </div> : <form onSubmit={submitOrder} className="space-y-5">
+                <div className="grid gap-4 sm:grid-cols-2"><label className="sm:col-span-2">Nome completo<input
+                    name="name" required className="input"
+                    placeholder="Como receberá o pedido"/></label><label>E-mail<input name="email" required type="email"
+                                                                                      className="input"
+                                                                                      placeholder="voce@email.com"/></label><label>Telefone<input
+                    name="phone" required className="input" placeholder="(61) 99999-9999"/></label><label>CEP<input
+                    name="cep" required className="input" placeholder="00000-000"/></label><label>Estado<select
+                    name="uf" required className="input">
+                    <option value="">Selecione</option>
+                    {["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"].map(uf =>
+                        <option key={uf}>{uf}</option>)}</select></label><label>Cidade<input name="city" required
+                                                                                             className="input"/></label><label>Bairro<input
+                    name="district" required className="input"/></label><label className="sm:col-span-2">Endereço<input
+                    name="address" required className="input" placeholder="Rua, número e complemento"/></label></div>
+                <div className="rounded-2xl bg-[#f1f0eb] p-4">
+                    <div className="flex items-center gap-3"><CreditCard className="text-[#ff4d00]"/>
+                        <div><strong className="block text-sm">Pagamento demonstrativo</strong><span
+                            className="text-xs text-black/50">Pix e cartão serão conectados na operação real.</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center justify-between border-t pt-4"><span className="font-semibold">Total dos produtos</span><strong
+                    className="text-xl">{money(subtotal)}</strong></div>
+                <button disabled={isSubmitting}
+                        className="w-full rounded-full bg-[#ff4d00] py-4 font-bold text-white disabled:opacity-50">{isSubmitting ? "Confirmando…" : "Confirmar pedido"}</button>
+            </form>}</DialogContent></Dialog>
+        <Dialog open={trackingOpen} onOpenChange={setTrackingOpen}><DialogContent className="sm:max-w-xl"><DialogHeader><DialogTitle
+            className="text-2xl font-black">RASTREAR PEDIDO</DialogTitle><DialogDescription>Digite o código recebido ao
+            concluir a compra.</DialogDescription></DialogHeader>
+            <form onSubmit={trackOrder} className="flex gap-2"><input value={trackingCode}
+                                                                      onChange={e => setTrackingCode(e.target.value.toUpperCase())}
+                                                                      className="input mt-0 flex-1 uppercase"
+                                                                      placeholder="KIT-000000" required/>
+                <button className="rounded-xl bg-[#151515] px-5 font-bold text-white">Buscar</button>
+            </form>
+            {trackingResult?.error &&
+                <div className="rounded-xl bg-red-50 p-4 text-sm text-red-700">Código não encontrado. Confira e tente
+                    novamente.</div>}{trackingResult && !trackingResult.error &&
+                <div className="rounded-2xl bg-[#f1f0eb] p-5">
+                    <div className="flex justify-between gap-4">
+                        <div><span className="text-xs font-bold uppercase text-black/45">Destino</span><strong
+                            className="block">{trackingResult.city}/{trackingResult.uf}</strong></div>
+                        <div className="text-right"><span
+                            className="text-xs font-bold uppercase text-black/45">Previsão</span><strong
+                            className="block">{trackingResult.estimate}</strong></div>
+                    </div>
+                    <Progress value={trackingResult.progress} className="mt-6"/>
+                    <div className="mt-5 space-y-4">{trackingResult.steps.map((step: any, i: number) => <div
+                        key={step.label} className={`flex gap-3 ${i > trackingResult.currentStep ? "opacity-35" : ""}`}>
+                        <div
+                            className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-full ${i <= trackingResult.currentStep ? "bg-[#ff4d00] text-white" : "border border-black/20"}`}>{i <= trackingResult.currentStep ?
+                            <Check size={15}/> : i + 1}</div>
+                        <div><strong className="text-sm">{step.label}</strong><p
+                            className="text-xs text-black/50">{step.detail}</p></div>
+                    </div>)}</div>
+                </div>}</DialogContent></Dialog>
+    </div>
 }

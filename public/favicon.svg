@@ -1,1 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="#151515"/><path d="M18 14h9v15l12-15h11L36 31l15 19H39L27 34v16h-9z" fill="#ff4d00"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="18" fill="#151515"></rect>
+
+  <path fill="#ff4d00" fill-rule="evenodd" clip-rule="evenodd" d="
+      M17 13
+      H32
+      C45 13 53 20.5 53 32
+      C53 43.5 45 51 32 51
+      H17
+      V13
+      Z
+
+      M27 22
+      V42
+      H32
+      C39.5 42 44 38.2 44 32
+      C44 25.8 39.5 22 32 22
+      H27
+      Z
+    "></path>
+</svg>
