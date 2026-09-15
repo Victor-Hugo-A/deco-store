@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Check, CircleUserRound, CreditCard, Heart, Menu, Minus, PackageCheck, Plus, Search, ShieldCheck, ShoppingBag, Sparkles, Truck, Zap } from "lucide-react";
+import { ArrowRight, Check, CreditCard, Heart, Menu, Minus, PackageCheck, Plus, Search, ShieldCheck, ShoppingBag, Sparkles, Truck, Zap } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster, toast } from "sonner";
+import { AccountMenu } from "@/components/account-menu";
 
 type Product = { id:number; name:string; team:string; category:string; season:string; price:number; oldPrice?:number; image:string; badge?:string; color:string; description:string; details:string[] };
 type CartItem = Product & { size:string; quantity:number };
@@ -54,7 +55,7 @@ export default function Home(){
       <button className="lg:hidden" aria-label="Abrir menu" onClick={()=>setMenuOpen(!menuOpen)}><Menu/></button><a href="#inicio" className="mr-3 flex items-center gap-2 text-2xl font-black tracking-[-.08em] sm:text-3xl"><span className="grid size-9 place-items-center rounded-full bg-[#ff4d00] text-sm text-white">K</span>KITORA</a>
       <nav className={`${menuOpen?"flex":"hidden"} absolute left-0 top-full w-full flex-col gap-5 border-b bg-[#f5f4ef] p-5 font-semibold lg:static lg:flex lg:w-auto lg:flex-row lg:border-0 lg:bg-transparent lg:p-0`}><a href="#catalogo">Lançamentos</a><a href="#catalogo">Clubes</a><a href="#catalogo">Seleções</a><a href="#catalogo">Retrô</a></nav>
       <div className="ml-auto hidden min-w-52 max-w-sm flex-1 items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 md:flex"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Busque por time ou camisa" aria-label="Buscar produtos"/></div>
-      <button onClick={()=>setTrackingOpen(true)} className="hidden items-center gap-2 text-sm font-semibold sm:flex"><PackageCheck size={20}/> Rastrear</button><button aria-label="Minha conta"><CircleUserRound size={22}/></button><button onClick={()=>setCartOpen(true)} aria-label={`Carrinho com ${itemCount} itens`} className="relative"><ShoppingBag size={23}/>{itemCount>0&&<span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-[#ff4d00] text-[10px] font-bold text-white">{itemCount}</span>}</button>
+      <button onClick={()=>setTrackingOpen(true)} className="hidden items-center gap-2 text-sm font-semibold sm:flex"><PackageCheck size={20}/> Rastrear</button><AccountMenu/><button onClick={()=>setCartOpen(true)} aria-label={`Carrinho com ${itemCount} itens`} className="relative"><ShoppingBag size={23}/>{itemCount>0&&<span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-[#ff4d00] text-[10px] font-bold text-white">{itemCount}</span>}</button>
     </div></header>
     <main id="inicio">
       <section className="hero-grid relative overflow-hidden bg-[#181818] text-white"><div className="mx-auto grid min-h-[530px] max-w-[1440px] items-center gap-8 px-4 py-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr]">
