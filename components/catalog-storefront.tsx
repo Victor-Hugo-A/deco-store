@@ -422,7 +422,7 @@ export function CatalogStorefront() {
       </footer>
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-h-[92vh] overflow-y-auto border-0 p-0 sm:max-w-6xl">
+        <DialogContent className="max-h-[92vh] overflow-x-hidden overflow-y-auto border-0 p-0 sm:max-w-6xl">
           {selected && (
             <div className="grid md:grid-cols-[1.08fr_.92fr]">
               <div className="bg-[#deddd7] p-4">
@@ -455,21 +455,31 @@ export function CatalogStorefront() {
                     </div>
                   )}
                 </div>
-                <div className="mt-3 grid max-h-40 grid-cols-5 gap-2 overflow-y-auto sm:grid-cols-6">
-                  {selected.images.map((image, index) => (
-                    <button
-                      key={image.src}
-                      onClick={() => setImageIndexById((current) => ({ ...current, [selected.id]: index }))}
-                      className={`overflow-hidden rounded-xl border-2 ${
-                        selectedImageIndex === index ? "border-[#ff4d00]" : "border-transparent"
-                      }`}
-                      aria-label={`Selecionar foto ${index + 1}`}
-                    >
-                      <span className="relative block aspect-square w-full">
-                        <Image src={image.src} alt="" fill sizes="96px" className="object-cover" />
-                      </span>
-                    </button>
-                  ))}
+                <div className="mt-3">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className="text-xs font-bold uppercase tracking-[.14em] text-black/45">Fotos da coleção</p>
+                    <span className="rounded-full bg-white px-3 py-1 text-[11px] font-bold text-black/60">
+                      {selectedImageIndex + 1}/{selected.images.length}
+                    </span>
+                  </div>
+                  <div className="thumb-grid-scroll grid max-h-40 grid-cols-5 gap-2 overflow-y-auto pr-2 sm:grid-cols-6">
+                    {selected.images.map((image, index) => (
+                      <button
+                        key={image.src}
+                        onClick={() => setImageIndexById((current) => ({ ...current, [selected.id]: index }))}
+                        className={`relative overflow-hidden rounded-xl border-2 bg-[#deddd7] ${
+                          selectedImageIndex === index
+                            ? "border-[#ff4d00]"
+                            : "border-transparent hover:border-black/20"
+                        }`}
+                        aria-label={`Selecionar foto ${index + 1}`}
+                      >
+                        <span className="relative block aspect-square w-full">
+                          <Image src={image.src} alt="" fill sizes="96px" className="object-cover" />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
