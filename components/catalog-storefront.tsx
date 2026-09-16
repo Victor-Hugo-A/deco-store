@@ -238,24 +238,24 @@ export function CatalogStorefront() {
               </div>
             </div>
             <div className="relative mx-auto h-[390px] w-full max-w-[560px] sm:h-[470px]">
-              <div className="absolute left-[1%] top-[8%] h-[88%] w-[62%] rotate-[-7deg] overflow-hidden rounded-[1.5rem] shadow-2xl">
+              <div className="group absolute left-[1%] top-[8%] h-[88%] w-[62%] rotate-[-7deg] overflow-hidden rounded-[1.5rem] shadow-2xl transition duration-300 hover:z-20 hover:-translate-y-3 hover:scale-[1.04] hover:shadow-[0_28px_70px_rgba(0,0,0,.48)]">
                 <Image
                   src={featured.images[1]?.src ?? featured.images[0].src}
                   alt={featured.team}
                   fill
                   priority
                   sizes="(min-width: 1024px) 350px, 62vw"
-                  className="object-cover"
+                  className="object-cover transition duration-500 group-hover:scale-110"
                 />
               </div>
-              <div className="absolute right-0 top-[2%] h-[78%] w-[55%] rotate-[6deg] overflow-hidden rounded-[1.5rem] shadow-2xl">
+              <div className="group absolute right-0 top-[2%] h-[78%] w-[55%] rotate-[6deg] overflow-hidden rounded-[1.5rem] shadow-2xl transition duration-300 hover:z-20 hover:-translate-y-3 hover:scale-[1.04] hover:shadow-[0_28px_70px_rgba(0,0,0,.48)]">
                 <Image
                   src={secondary.images[0].src}
                   alt={secondary.team}
                   fill
                   priority
                   sizes="(min-width: 1024px) 310px, 55vw"
-                  className="object-cover"
+                  className="object-cover transition duration-500 group-hover:scale-110"
                 />
               </div>
               <div className="absolute bottom-4 right-3 inline-flex items-center gap-3 rounded-full border border-white/15 bg-[#111]/90 px-4 py-3 text-white shadow-xl backdrop-blur">
