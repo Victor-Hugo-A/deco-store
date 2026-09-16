@@ -18,10 +18,11 @@ import {
   Shirt,
   Sparkles,
 } from "lucide-react";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { AccountMenu } from "@/components/account-menu";
 import { BrandLogo } from "@/components/brand-logo";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { authClient } from "@/lib/auth-client";
 import { catalogCollections, catalogContact, type CatalogCollection } from "@/lib/catalog-data";
 
 const sizes = ["P", "M", "G", "GG", "3G"];
@@ -85,6 +86,7 @@ function buildWhatsappUrl(collection: CatalogCollection, imageIndex: number, siz
 }
 
 export function CatalogStorefront() {
+  const { data: session, isPending: sessionPending } = authClient.useSession();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todos");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -155,9 +157,21 @@ export function CatalogStorefront() {
     document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function handleOrderClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (session && !sessionPending) {
+      return;
+    }
+
+    event.preventDefault();
+    toast.warning("Entre na sua conta para fazer o pedido.", {
+      description: sessionPending ? "Estamos confirmando sua sessão. Tente novamente em instantes." : "Depois do login, o WhatsApp do pedido será liberado.",
+      duration: 4000,
+    });
+  }
+
   return (
     <div className="min-h-screen bg-[#f5f4ef] text-[#151515]">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-right" richColors duration={4000} />
       <div className="bg-[#141414] px-4 py-2.5 text-center text-xs font-semibold tracking-wide text-white sm:text-sm">
         SOMENTE POR ENCOMENDA · PRAZO INFORMADO NO CATÁLOGO: {catalogContact.leadTime}
       </div>
@@ -284,7 +298,7 @@ export function CatalogStorefront() {
           </div>
         </section>
 
-        <section id="como-pedir" className="border-b border-black/10 bg-[#f1f0eb] px-4 py-8 sm:px-8">
+        <section id="como-pedir" className="scroll-mt-24 border-b border-black/10 bg-[#f1f0eb] px-4 py-8 sm:px-8">
           <div className="mx-auto max-w-[1440px]">
             <div className="grid gap-4 rounded-[1.75rem] border border-black/10 bg-white/90 p-4 shadow-sm sm:p-5 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
               <div className="rounded-[1.35rem] bg-[#faf7f1] p-5">
@@ -327,7 +341,7 @@ export function CatalogStorefront() {
           </div>
         </section>
 
-        <section id="catalogo" className="px-4 py-14 sm:px-8">
+        <section id="catalogo" className="scroll-mt-24 px-4 py-14 sm:px-8">
           <div className="mx-auto max-w-[1440px]">
             <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
@@ -748,11 +762,17 @@ export function CatalogStorefront() {
 
                 <a
                   href={buildWhatsappUrl(selected, selectedImageIndex, selectedSize, selectedVersion, customName)}
+                  onClick={handleOrderClick}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#ff4d00] py-4 font-bold text-white hover:bg-[#e84600]"
+                  aria-disabled={!session || sessionPending}
+                  className={`mt-7 flex w-full items-center justify-center gap-2 rounded-full py-4 font-bold text-white transition ${
+                    session && !sessionPending
+                      ? "bg-[#ff4d00] hover:bg-[#e84600]"
+                      : "bg-[#151515] hover:bg-[#252525]"
+                  }`}
                 >
-                  <MessageCircle size={19} /> Enviar pedido pelo WhatsApp
+                  <MessageCircle size={19} /> {session && !sessionPending ? "Enviar pedido pelo WhatsApp" : "Entrar para enviar pedido"}
                 </a>
               </div>
             </div>

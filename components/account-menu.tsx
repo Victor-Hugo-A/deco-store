@@ -10,6 +10,7 @@ import {
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
+import {toast} from "sonner";
 import {accountError, authClient} from "@/lib/auth-client";
 
 type Mode = "login" | "signup" | "verify" | "recover";
@@ -63,6 +64,10 @@ export function AccountMenu({initialMode = "login", label}: { initialMode?: Mode
                 }
                 await refetch();
                 setOpen(false);
+                toast.success("Login realizado com sucesso.", {
+                    description: "Agora você pode enviar seu pedido pelo WhatsApp.",
+                    duration: 4000,
+                });
             } else if (mode === "signup") {
                 const result = await authClient.signUp.email({
                     name,
@@ -118,6 +123,10 @@ export function AccountMenu({initialMode = "login", label}: { initialMode?: Mode
             }
             changeMode("login");
             await refetch();
+            toast.info("Você saiu da conta.", {
+                description: "Entre novamente para fazer um pedido.",
+                duration: 4000,
+            });
         } catch {
             setError("Não foi possível sair. Tente novamente.");
         } finally {
