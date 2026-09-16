@@ -12,7 +12,7 @@
 
 A DECO Store é uma vitrine de camisas de futebol feita para venda sob encomenda. O cliente consulta o catálogo, navega pelas fotos reais, escolhe tamanho e versão, e envia a referência pelo WhatsApp com a mensagem já montada.
 
-O catálogo usa o material recebido no arquivo original. Quando uma foto veio sem nome confiável, o app mostra **Referência do catálogo** em vez de inventar modelo, temporada ou preço. Quando o valor não consta no material, o site exibe **Consultar via WhatsApp**.
+O catálogo usa o material recebido no arquivo original. Quando uma foto veio sem nome confiável, o app mostra **Referência do catálogo** em vez de inventar modelo ou temporada. Os valores seguem a tabela padrão da loja por versão.
 
 ## Destaques
 
@@ -21,11 +21,19 @@ O catálogo usa o material recebido no arquivo original. Quando uma foto veio se
 | Catálogo | 17 clubes organizados por liga, com 202 fotos reais. |
 | Fotos | Cards com carrossel, setas e miniaturas quando existe mais de uma imagem. |
 | Busca | Pesquisa por time ou liga, com Enter, clique na lupa e busca sem depender de acentos. |
-| Pedido | WhatsApp com time, liga, referência da foto, arquivo original, versão e tamanho. |
+| Pedido | WhatsApp com time, liga, referência da foto, arquivo original, versão, tamanho e valor. |
 | Medidas | Guia base de P a 3G para o cliente comparar com uma camisa que já veste bem. |
 | Conta | Cadastro, login, confirmação por e-mail, recuperação de senha e logout. |
 | Prazo | Informação do catálogo: **20 a 40 dias**. |
 | Contato | WhatsApp: **(61) 99891-2720**. |
+
+## Valores por Versão
+
+| Versão | Valor | Observação |
+| --- | --- | --- |
+| Torcedor | R$ 160,00 | Versão padrão. |
+| Jogador | R$ 200,00 | Versão jogador. |
+| Personalizada | R$ 220,00 | Nome atrás e todos os patrocinadores. |
 
 ## Fluxo do Cliente
 
@@ -35,7 +43,7 @@ flowchart LR
   B --> C[Abre uma coleção]
   C --> D[Navega pelas fotos reais]
   D --> E[Confere referência e medidas]
-  E --> F[Seleciona versão e tamanho]
+  E --> F[Seleciona versão, tamanho e valor]
   F --> G[Envia o pedido pelo WhatsApp]
 ```
 
@@ -123,7 +131,7 @@ Implementado:
 - modal com miniaturas;
 - referência da foto selecionada;
 - guia de medidas de P a 3G;
-- seleção de versão e tamanho;
+- seleção de versão, tamanho e preço;
 - envio do pedido para WhatsApp;
 - cadastro e login com confirmação por e-mail;
 - recuperação de senha;
@@ -131,7 +139,6 @@ Implementado:
 
 Dependências externas da operação:
 
-- valor final de cada camisa;
 - confirmação manual pelo WhatsApp;
 - pagamento;
 - envio e rastreio.

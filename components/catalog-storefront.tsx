@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { FormEvent } from "react";
+import type { FormEvent, MouseEvent, PointerEvent } from "react";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -10,6 +10,7 @@ import {
   ChevronRight,
   Clock,
   ImageIcon,
+  Maximize2,
   Menu,
   MessageCircle,
   PackageCheck,
@@ -24,7 +25,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { catalogCollections, catalogContact, type CatalogCollection } from "@/lib/catalog-data";
 
 const sizes = ["P", "M", "G", "GG", "3G"];
-const versions = ["Torcedor", "Jogador"];
+const versions = [
+  { id: "torcedor", label: "Torcedor", price: 160, description: "Versão padrão" },
+  { id: "jogador", label: "Jogador", price: 200, description: "Versão jogador" },
+  { id: "personalizada", label: "Personalizada", price: 220, description: "Nome atrás e todos os patrocinadores" },
+];
 const sizeGuide = [
   { size: "P", chest: "50 cm", length: "69 cm", height: "1,60 a 1,70 m" },
   { size: "M", chest: "52 cm", length: "71 cm", height: "1,68 a 1,78 m" },
@@ -44,18 +49,29 @@ function currentImage(collection: CatalogCollection, indexById: Record<string, n
   return collection.images[indexById[collection.id] ?? 0] ?? collection.images[0];
 }
 
-function buildWhatsappUrl(collection: CatalogCollection, imageIndex: number, size: string, version: string) {
+function money(value: number) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function versionById(id: string) {
+  return versions.find((version) => version.id === id) ?? versions[0];
+}
+
+function buildWhatsappUrl(collection: CatalogCollection, imageIndex: number, size: string, versionId: string, customName: string) {
   const image = collection.images[imageIndex] ?? collection.images[0];
+  const version = versionById(versionId);
   const text = [
     "Olá! Quero fazer uma encomenda pelo catálogo DECO.",
     `Time: ${collection.team}`,
     `Liga: ${collection.league}`,
     `Referência/foto: ${image.label}`,
     `Arquivo de referência: ${image.originalFile}`,
-    `Versão: ${version}`,
+    `Versão: ${version.label}`,
+    version.id === "personalizada" ? "Detalhe: nome atrás com todos os patrocinadores" : null,
+    version.id === "personalizada" ? `Nome atrás: ${customName.trim() || "informar"}` : null,
     `Tamanho: ${size}`,
-    "Valor: consultar",
-  ].join("\n");
+    `Valor: ${money(version.price)}`,
+  ].filter(Boolean).join("\n");
 
   return `https://wa.me/${collection.whatsapp}?text=${encodeURIComponent(text)}`;
 }
@@ -67,7 +83,10 @@ export function CatalogStorefront() {
   const [selected, setSelected] = useState<CatalogCollection | null>(null);
   const [imageIndexById, setImageIndexById] = useState<Record<string, number>>({});
   const [selectedSize, setSelectedSize] = useState("M");
-  const [selectedVersion, setSelectedVersion] = useState("Torcedor");
+  const [selectedVersion, setSelectedVersion] = useState("torcedor");
+  const [customName, setCustomName] = useState("");
+  const [zoomed, setZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState("50% 50%");
 
   const categories = useMemo(
     () => ["Todos", ...Array.from(new Set(catalogCollections.map((item) => item.category)))],
@@ -87,6 +106,7 @@ export function CatalogStorefront() {
   const featured = catalogCollections.find((item) => item.team === "Flamengo") ?? catalogCollections[0];
   const secondary = catalogCollections.find((item) => item.team === "Real Madrid") ?? catalogCollections[1] ?? featured;
   const selectedImageIndex = selected ? imageIndexById[selected.id] ?? 0 : 0;
+  const selectedVersionOption = versionById(selectedVersion);
 
   function moveImage(collection: CatalogCollection, direction: 1 | -1) {
     setImageIndexById((current) => {
@@ -100,7 +120,19 @@ export function CatalogStorefront() {
     if (typeof index === "number") {
       setImageIndexById((current) => ({ ...current, [collection.id]: index }));
     }
+    setZoomed(false);
+    setZoomOrigin("50% 50%");
     setSelected(collection);
+  }
+
+  function updateZoomOrigin(event: MouseEvent<HTMLElement> | PointerEvent<HTMLElement>) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    const safeX = Math.min(100, Math.max(0, x));
+    const safeY = Math.min(100, Math.max(0, y));
+
+    setZoomOrigin(`${safeX}% ${safeY}%`);
   }
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
@@ -175,7 +207,7 @@ export function CatalogStorefront() {
               </h1>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-white/70">
                 Escolha a camisa pelo catálogo, selecione tamanho e versão, e envie o pedido direto pelo WhatsApp.
-                Valores aparecem como consulta quando não estão informados no material recebido.
+                Valores padrão por versão: torcedor, jogador ou personalizada.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
@@ -230,7 +262,7 @@ export function CatalogStorefront() {
                 <span className="grid size-9 place-items-center rounded-full bg-[#ff4d00] text-xs font-black">R$</span>
                 <div>
                   <span className="block text-[10px] font-bold uppercase tracking-[.16em] text-white/45">Valor</span>
-                  <strong className="text-sm">Consultar no WhatsApp</strong>
+                  <strong className="text-sm">A partir de {money(160)}</strong>
                 </div>
               </div>
             </div>
@@ -299,7 +331,10 @@ export function CatalogStorefront() {
                   const activeIndex = imageIndexById[collection.id] ?? 0;
 
                   return (
-                    <article key={collection.id} className="overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm">
+                    <article
+                      key={collection.id}
+                      className="group overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                    >
                       <div className="relative aspect-[4/3] bg-[#deddd7]">
                         <button
                           onClick={() => selectCollection(collection)}
@@ -312,7 +347,7 @@ export function CatalogStorefront() {
                             fill
                             priority={collectionIndex < 3}
                             sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
-                            className="object-cover"
+                            className="object-cover transition duration-500 group-hover:scale-110"
                           />
                         </button>
                         <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide">
@@ -359,7 +394,7 @@ export function CatalogStorefront() {
                           </span>
                         </div>
                         <div className="mt-5 flex items-center justify-between gap-3">
-                          <strong>{collection.priceLabel}</strong>
+                          <strong>A partir de {money(160)}</strong>
                           <button
                             onClick={() => selectCollection(collection)}
                             className="rounded-full bg-[#151515] px-4 py-2 text-sm font-bold text-white"
@@ -421,32 +456,64 @@ export function CatalogStorefront() {
         </div>
       </footer>
 
-      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+      <Dialog open={!!selected} onOpenChange={(open) => {
+        if (!open) {
+          setZoomed(false);
+          setZoomOrigin("50% 50%");
+          setSelected(null);
+        }
+      }}>
         <DialogContent className="max-h-[92vh] overflow-x-hidden overflow-y-auto border-0 p-0 sm:max-w-6xl">
           {selected && (
             <div className="grid md:grid-cols-[1.08fr_.92fr]">
               <div className="bg-[#deddd7] p-4">
                 <div className="relative overflow-hidden rounded-2xl bg-white">
-                  <div className="relative aspect-[4/4.8] w-full">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      updateZoomOrigin(event);
+                      setZoomed((value) => !value);
+                    }}
+                    onPointerMove={(event) => {
+                      if (zoomed) {
+                        updateZoomOrigin(event);
+                      }
+                    }}
+                    className={`relative block aspect-[4/4.8] w-full overflow-hidden text-left ${zoomed ? "cursor-zoom-out" : "cursor-zoom-in"}`}
+                    style={{ touchAction: zoomed ? "none" : "manipulation" }}
+                    aria-label={zoomed ? "Reduzir imagem" : "Ampliar imagem"}
+                  >
                     <Image
                       src={selected.images[selectedImageIndex]?.src}
                       alt={selected.images[selectedImageIndex]?.alt}
                       fill
                       sizes="(min-width: 768px) 52vw, 100vw"
-                      className="object-cover"
+                      className={`object-cover transition duration-300 ${zoomed ? "scale-[2.15]" : "scale-100"}`}
+                      style={{ transformOrigin: zoomOrigin }}
                     />
-                  </div>
+                    <span className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-xs font-bold text-[#151515] shadow">
+                      <Maximize2 size={15} /> {zoomed ? "Reduzir" : "Zoom"}
+                    </span>
+                  </button>
                   {selected.images.length > 1 && (
                     <div className="absolute inset-x-4 top-1/2 flex -translate-y-1/2 justify-between">
                       <button
-                        onClick={() => moveImage(selected, -1)}
+                        onClick={() => {
+                          setZoomed(false);
+                          setZoomOrigin("50% 50%");
+                          moveImage(selected, -1);
+                        }}
                         className="grid size-11 place-items-center rounded-full bg-white/95 shadow"
                         aria-label="Foto anterior"
                       >
                         <ChevronLeft size={20} />
                       </button>
                       <button
-                        onClick={() => moveImage(selected, 1)}
+                        onClick={() => {
+                          setZoomed(false);
+                          setZoomOrigin("50% 50%");
+                          moveImage(selected, 1);
+                        }}
                         className="grid size-11 place-items-center rounded-full bg-white/95 shadow"
                         aria-label="Próxima foto"
                       >
@@ -462,15 +529,19 @@ export function CatalogStorefront() {
                       {selectedImageIndex + 1}/{selected.images.length}
                     </span>
                   </div>
-                  <div className="thumb-grid-scroll grid max-h-40 grid-cols-5 gap-2 overflow-y-auto pr-2 sm:grid-cols-6">
+                  <div className="thumb-grid-scroll grid max-h-[268px] grid-cols-5 gap-2 overflow-y-auto pr-2 sm:grid-cols-6">
                     {selected.images.map((image, index) => (
                       <button
                         key={image.src}
-                        onClick={() => setImageIndexById((current) => ({ ...current, [selected.id]: index }))}
+                        onClick={() => {
+                          setZoomed(false);
+                          setZoomOrigin("50% 50%");
+                          setImageIndexById((current) => ({ ...current, [selected.id]: index }));
+                        }}
                         className={`relative overflow-hidden rounded-xl border-2 bg-[#deddd7] ${
                           selectedImageIndex === index
                             ? "border-[#ff4d00]"
-                            : "border-transparent hover:border-black/20"
+                            : "border-transparent hover:z-10 hover:-translate-y-1 hover:scale-110 hover:border-black/20 hover:shadow-xl"
                         }`}
                         aria-label={`Selecionar foto ${index + 1}`}
                       >
@@ -496,8 +567,8 @@ export function CatalogStorefront() {
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="text-[#ff4d00]" />
                     <div>
-                      <strong className="block text-sm">Preço não informado no catálogo</strong>
-                      <span className="text-xs text-black/55">O valor fica para confirmar pelo WhatsApp.</span>
+                      <strong className="block text-sm">Valor: {money(selectedVersionOption.price)}</strong>
+                      <span className="text-xs text-black/55">Preço padrão conforme a versão selecionada.</span>
                     </div>
                   </div>
                 </div>
@@ -512,22 +583,39 @@ export function CatalogStorefront() {
                 <div className="mt-6">
                   <div className="mb-2 flex justify-between text-sm font-bold">
                     <span>Versão</span>
-                    <span className="text-black/45">Informe no pedido</span>
+                    <span className="text-black/45">Valor padrão</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid gap-2 sm:grid-cols-3">
                     {versions.map((version) => (
                       <button
-                        key={version}
-                        onClick={() => setSelectedVersion(version)}
-                        className={`rounded-xl border py-3 font-bold ${
-                          selectedVersion === version ? "border-[#151515] bg-[#151515] text-white" : "border-black/15"
+                        key={version.id}
+                        onClick={() => setSelectedVersion(version.id)}
+                        className={`rounded-xl border p-3 text-left ${
+                          selectedVersion === version.id ? "border-[#151515] bg-[#151515] text-white" : "border-black/15 bg-white"
                         }`}
                       >
-                        {version}
+                        <span className="block text-sm font-black">{version.label}</span>
+                        <span className={`mt-1 block text-xs ${selectedVersion === version.id ? "text-white/65" : "text-black/50"}`}>
+                          {version.description}
+                        </span>
+                        <strong className="mt-2 block text-sm">{money(version.price)}</strong>
                       </button>
                     ))}
                   </div>
                 </div>
+
+                {selectedVersion === "personalizada" && (
+                  <label className="mt-4 block text-sm font-semibold">
+                    Nome atrás
+                    <input
+                      value={customName}
+                      onChange={(event) => setCustomName(event.target.value)}
+                      className="input"
+                      maxLength={24}
+                      placeholder="Ex.: VICTOR"
+                    />
+                  </label>
+                )}
 
                 <div className="mt-6">
                   <div className="mb-2 flex justify-between text-sm font-bold">
@@ -586,7 +674,7 @@ export function CatalogStorefront() {
                 </div>
 
                 <a
-                  href={buildWhatsappUrl(selected, selectedImageIndex, selectedSize, selectedVersion)}
+                  href={buildWhatsappUrl(selected, selectedImageIndex, selectedSize, selectedVersion, customName)}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[#ff4d00] py-4 font-bold text-white hover:bg-[#e84600]"
