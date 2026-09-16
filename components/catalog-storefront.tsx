@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -24,6 +25,13 @@ import { catalogCollections, catalogContact, type CatalogCollection } from "@/li
 
 const sizes = ["P", "M", "G", "GG", "3G"];
 const versions = ["Torcedor", "Jogador"];
+
+function normalizeSearch(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
 
 function currentImage(collection: CatalogCollection, indexById: Record<string, number>) {
   return collection.images[indexById[collection.id] ?? 0] ?? collection.images[0];
@@ -60,10 +68,10 @@ export function CatalogStorefront() {
   );
 
   const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
+    const term = normalizeSearch(query.trim());
     return catalogCollections.filter((item) => {
       const matchesCategory = category === "Todos" || item.category === category;
-      const matchesQuery = !term || `${item.team} ${item.league}`.toLowerCase().includes(term);
+      const matchesQuery = !term || normalizeSearch(`${item.team} ${item.league}`).includes(term);
       return matchesCategory && matchesQuery;
     });
   }, [category, query]);
@@ -86,6 +94,11 @@ export function CatalogStorefront() {
       setImageIndexById((current) => ({ ...current, [collection.id]: index }));
     }
     setSelected(collection);
+  }
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
@@ -112,16 +125,23 @@ export function CatalogStorefront() {
               WhatsApp
             </a>
           </nav>
-          <div className="ml-auto hidden min-w-52 max-w-sm flex-1 items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 md:flex">
-            <Search size={18} />
+          <form
+            onSubmit={submitSearch}
+            className="ml-auto hidden min-w-52 max-w-sm flex-1 items-center gap-2 rounded-full border border-black/15 bg-white px-4 py-2.5 md:flex"
+          >
+            <button type="submit" aria-label="Buscar no catálogo" className="text-black/70 hover:text-[#ff4d00]">
+              <Search size={18} />
+            </button>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
+              type="search"
+              enterKeyHint="search"
               className="w-full bg-transparent text-sm outline-none"
               placeholder="Busque por time ou liga"
               aria-label="Buscar no catálogo"
             />
-          </div>
+          </form>
           <a
             href={`https://wa.me/${catalogContact.whatsapp}`}
             target="_blank"
@@ -251,15 +271,19 @@ export function CatalogStorefront() {
               </div>
             </div>
 
-            <div className="mb-7 flex items-center rounded-xl border border-black/10 bg-white px-4 py-3 md:hidden">
-              <Search size={18} />
+            <form onSubmit={submitSearch} className="mb-7 flex items-center rounded-xl border border-black/10 bg-white px-4 py-3 md:hidden">
+              <button type="submit" aria-label="Buscar no catálogo" className="text-black/70 hover:text-[#ff4d00]">
+                <Search size={18} />
+              </button>
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
+                type="search"
+                enterKeyHint="search"
                 className="ml-2 w-full bg-transparent outline-none"
                 placeholder="Busque por time ou liga"
               />
-            </div>
+            </form>
 
             {filtered.length ? (
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
