@@ -57,6 +57,14 @@ function versionById(id: string) {
   return versions.find((version) => version.id === id) ?? versions[0];
 }
 
+function WhatsappIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className} fill="currentColor">
+      <path d="M16.03 3.2A12.75 12.75 0 0 0 5.14 22.6L3.7 28.8l6.33-1.43A12.75 12.75 0 1 0 16.03 3.2Zm0 2.35a10.4 10.4 0 0 1 8.78 15.96 10.33 10.33 0 0 1-12.7 3.7l-.42-.2-3.75.85.86-3.65-.23-.43A10.4 10.4 0 0 1 16.03 5.55Zm-4.5 4.98c-.23 0-.6.08-.92.43-.31.35-1.2 1.17-1.2 2.86 0 1.68 1.24 3.3 1.4 3.53.17.23 2.39 3.82 5.92 5.2 2.93 1.16 3.54.93 4.18.87.64-.06 2.07-.85 2.36-1.66.29-.81.29-1.51.2-1.66-.08-.14-.31-.23-.66-.4-.35-.18-2.07-1.02-2.39-1.14-.32-.12-.55-.17-.78.18-.23.35-.9 1.13-1.1 1.36-.2.23-.4.26-.75.09-.35-.18-1.48-.55-2.82-1.74-1.04-.93-1.75-2.08-1.95-2.43-.2-.35-.02-.54.15-.71.15-.15.35-.4.52-.6.17-.2.23-.35.35-.58.12-.23.06-.43-.03-.6-.09-.18-.78-1.88-1.07-2.57-.28-.68-.57-.59-.78-.6h-.6Z" />
+    </svg>
+  );
+}
+
 function buildWhatsappUrl(collection: CatalogCollection, imageIndex: number, size: string, versionId: string, customName: string) {
   const image = collection.images[imageIndex] ?? collection.images[0];
   const version = versionById(versionId);
@@ -107,6 +115,13 @@ export function CatalogStorefront() {
   const secondary = catalogCollections.find((item) => item.team === "Real Madrid") ?? catalogCollections[1] ?? featured;
   const selectedImageIndex = selected ? imageIndexById[selected.id] ?? 0 : 0;
   const selectedVersionOption = versionById(selectedVersion);
+  const orderStepVisuals = [
+    { icon: Search, tone: "bg-orange-50 text-[#ff4d00] ring-orange-100" },
+    { icon: MessageCircle, tone: "bg-emerald-50 text-emerald-700 ring-emerald-100" },
+    { icon: Shirt, tone: "bg-sky-50 text-sky-700 ring-sky-100" },
+    { icon: CheckCircle2, tone: "bg-violet-50 text-violet-700 ring-violet-100" },
+    { icon: PackageCheck, tone: "bg-stone-100 text-stone-700 ring-stone-200" },
+  ];
 
   function moveImage(collection: CatalogCollection, direction: 1 | -1) {
     setImageIndexById((current) => {
@@ -269,21 +284,45 @@ export function CatalogStorefront() {
           </div>
         </section>
 
-        <section id="como-pedir" className="border-b border-black/10 bg-white px-4 py-10 sm:px-8">
-          <div className="mx-auto grid max-w-[1440px] gap-5 md:grid-cols-[.85fr_1.15fr] md:items-center">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[.18em] text-[#ff4d00]">Como fazer seu pedido</p>
-              <h2 className="mt-2 text-3xl font-black tracking-[-.03em] sm:text-5xl">Escolha, envie e confirme.</h2>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              {catalogContact.orderInstructions.map((step, index) => (
-                <div key={step} className="rounded-2xl border border-black/10 bg-[#f5f4ef] p-4">
-                  <span className="grid size-8 place-items-center rounded-full bg-[#151515] text-sm font-bold text-white">
-                    {index + 1}
+        <section id="como-pedir" className="border-b border-black/10 bg-[#f1f0eb] px-4 py-8 sm:px-8">
+          <div className="mx-auto max-w-[1440px]">
+            <div className="grid gap-4 rounded-[1.75rem] border border-black/10 bg-white/90 p-4 shadow-sm sm:p-5 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
+              <div className="rounded-[1.35rem] bg-[#faf7f1] p-5">
+                <p className="text-xs font-bold uppercase tracking-[.18em] text-[#ff4d00]">Como fazer seu pedido</p>
+                <h2 className="mt-2 text-2xl font-black tracking-[-.03em] sm:text-4xl">Pedido simples, do catálogo ao WhatsApp.</h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-black/60">
+                  Abra a camisa, escolha tamanho e versão. O site monta a mensagem com as informações do pedido para você enviar e confirmar pelo atendimento.
+                </p>
+                <div className="mt-4 grid gap-2 text-xs font-bold text-black/70 sm:grid-cols-2">
+                  <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2.5">
+                    <Clock size={16} className="text-[#ff4d00]" /> Prazo: {catalogContact.leadTime}
                   </span>
-                  <p className="mt-3 text-sm font-semibold leading-snug">{step}</p>
+                  <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2.5">
+                    <MessageCircle size={16} className="text-[#ff4d00]" /> {catalogContact.phone}
+                  </span>
                 </div>
-              ))}
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+                {catalogContact.orderInstructions.map((step, index) => {
+                  const visual = orderStepVisuals[index] ?? orderStepVisuals[0];
+                  const Icon = visual.icon;
+
+                  return (
+                    <div key={step} className="relative rounded-[1.15rem] border border-black/10 bg-white p-3.5 shadow-sm">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <span className={`grid size-9 place-items-center rounded-xl ring-1 ${visual.tone}`}>
+                          <Icon size={18} />
+                        </span>
+                        <span className="rounded-full bg-[#151515] px-2 py-0.5 text-[11px] font-black text-white">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <p className="text-[13px] font-bold leading-snug text-[#151515]">{step}</p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </section>
@@ -426,33 +465,67 @@ export function CatalogStorefront() {
         </section>
       </main>
 
-      <footer className="bg-[#111] px-4 py-12 text-white sm:px-8">
-        <div className="mx-auto grid max-w-[1440px] gap-8 md:grid-cols-3">
-          <div>
-            <div className="text-3xl font-black tracking-[-.04em]">
+      <footer className="bg-[#1d1a17] px-4 py-8 text-white sm:px-8">
+        <div className="mx-auto grid max-w-[1440px] gap-3 lg:grid-cols-[1.1fr_.95fr_.95fr]">
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[.04] p-5">
+            <div className="text-2xl font-black tracking-[-.04em]">
               <BrandLogo />
             </div>
-            <p className="mt-3 max-w-sm text-sm text-white/55">
-              Catálogo de camisas sob encomenda com fotos reais do material recebido.
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-white/55">
+              Catálogo de camisas sob encomenda com fotos reais, escolha por referência e pedido enviado direto para o atendimento.
             </p>
+            <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-bold text-white/70">
+              <span className="rounded-full border border-white/10 bg-white/[.06] px-3 py-1">Fotos reais</span>
+              <span className="rounded-full border border-white/10 bg-white/[.06] px-3 py-1">Sob encomenda</span>
+              <span className="rounded-full border border-white/10 bg-white/[.06] px-3 py-1">DECO Store</span>
+            </div>
           </div>
-          <div>
-            <strong>ATENDIMENTO</strong>
-            <p className="mt-3 text-sm text-white/55">
-              WhatsApp: {catalogContact.phone}
-              <br />
-              Prazo informado: {catalogContact.leadTime}
+
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[.04] p-5">
+            <p className="text-[11px] font-black uppercase tracking-[.18em] text-[#ff8a55]">Atendimento</p>
+            <h3 className="mt-1.5 text-lg font-black tracking-[-.02em]">Fale com o responsável</h3>
+            <p className="mt-2 text-sm leading-relaxed text-white/55">
+              Tire dúvidas, confirme a referência da camisa e finalize o pedido pelo WhatsApp.
             </p>
+            <a
+              href={`https://wa.me/${catalogContact.whatsapp}`}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Chamar o responsável no WhatsApp"
+              className="mt-4 inline-flex items-center gap-2.5 rounded-full bg-[#25d366] px-4 py-2.5 text-sm font-black text-[#062b15] transition hover:-translate-y-0.5 hover:bg-[#38e178] hover:shadow-lg"
+            >
+              <WhatsappIcon className="size-5" />
+              Chamar no WhatsApp
+            </a>
           </div>
-          <div>
-            <strong>VALORES</strong>
-            <p className="mt-3 text-sm text-white/55">
-              Quando o preço não consta no catálogo, o site mostra consulta via WhatsApp.
-            </p>
+
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[.04] p-5">
+            <p className="text-[11px] font-black uppercase tracking-[.18em] text-[#ff8a55]">Pedido</p>
+            <div className="mt-3 space-y-2">
+              <div className="flex items-center gap-3 rounded-xl bg-white/[.06] px-3 py-2.5">
+                <Clock size={17} className="text-[#ff8a55]" />
+                <div>
+                  <span className="block text-[11px] font-bold uppercase tracking-[.12em] text-white/35">Prazo</span>
+                  <strong className="text-sm">{catalogContact.leadTime}</strong>
+                </div>
+              </div>
+              <div className="rounded-xl bg-white/[.06] px-3 py-2.5">
+                <span className="block text-[11px] font-bold uppercase tracking-[.12em] text-white/35">Valores</span>
+                <div className="mt-1.5 grid gap-1 text-sm text-white/70">
+                  {versions.map((version) => (
+                    <span key={version.id} className="flex items-center justify-between gap-3">
+                      <span>{version.label}</span>
+                      <strong className="text-white">{money(version.price)}</strong>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="mx-auto mt-10 max-w-[1440px] border-t border-white/10 pt-5 text-xs text-white/35">
-          © 2026 DECO. Catálogo sob encomenda. Marcas pertencem aos seus respectivos proprietários.
+        <div className="mx-auto mt-4 flex max-w-[1440px] flex-col gap-2 border-t border-white/10 pt-4 text-xs text-white/35 sm:flex-row sm:items-center sm:justify-between">
+          <span>© 2026 DECO. Catálogo sob encomenda.</span>
+          <span>Marcas pertencem aos seus respectivos proprietários.</span>
         </div>
       </footer>
 
