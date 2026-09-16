@@ -1,6 +1,6 @@
-# DECO Store
+﻿# ⚽ DECO Store
 
-> Catálogo digital de camisas de futebol sob encomenda, com fotos reais, atendimento pelo WhatsApp e conta com confirmação por e-mail.
+> Catálogo digital de camisas de futebol sob encomenda, com fotos reais, conta de cliente, confirmação por e-mail e pedido enviado pelo WhatsApp.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white)
@@ -8,67 +8,72 @@
 ![Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)
 ![Resend](https://img.shields.io/badge/Resend-E--mail-111?style=for-the-badge)
 
-## Visão Geral
+---
 
-A DECO Store é uma vitrine de camisas de futebol feita para venda sob encomenda. O cliente consulta o catálogo, navega pelas fotos reais, escolhe tamanho e versão, e envia a referência pelo WhatsApp com a mensagem já montada.
+## 🧾 Sobre o projeto
 
-O catálogo usa o material recebido no arquivo original. Quando uma foto veio sem nome confiável, o app mostra **Referência do catálogo** em vez de inventar modelo ou temporada. Os valores seguem a tabela padrão da loja por versão.
+A **DECO Store** é uma vitrine de camisas de futebol feita para venda **sob encomenda**.
 
-## Destaques
+O cliente acessa o catálogo, pesquisa por time ou liga, abre a camisa desejada, visualiza as fotos reais, escolhe tamanho e versão, faz login na conta e envia o pedido pelo WhatsApp com a mensagem já preenchida.
 
-| Área | Funcionamento atual |
+O app não usa imagens genéricas para representar os produtos. As fotos exibidas vêm do catálogo recebido e ficam organizadas por clube, liga e referência.
+
+---
+
+## ✨ Principais recursos
+
+| Recurso | Como funciona |
 | --- | --- |
-| Catálogo | 17 clubes organizados por liga, com 202 fotos reais. |
-| Fotos | Cards com carrossel, setas e miniaturas quando existe mais de uma imagem. |
-| Busca | Pesquisa por time ou liga, com Enter, clique na lupa e busca sem depender de acentos. |
-| Pedido | WhatsApp com time, liga, referência da foto, arquivo original, versão, tamanho e valor. |
-| Medidas | Guia base de P a 3G para o cliente comparar com uma camisa que já veste bem. |
-| Conta | Cadastro, login, confirmação por e-mail, recuperação de senha e logout. |
-| Prazo | Informação do catálogo: **20 a 40 dias**. |
-| Contato | WhatsApp: **(61) 99891-2720**. |
+| 🖼️ Catálogo real | 17 clubes e 202 fotos reais organizadas por liga. |
+| 🔎 Busca | Pesquisa por time ou liga, funcionando com Enter, clique na lupa e sem depender de acentos. |
+| 🏷️ Referência da foto | Cada imagem tem uma referência para facilitar o atendimento pelo WhatsApp. |
+| 🖱️ Hover nas camisas | Cards e imagens principais ganham efeito de aproximação ao passar o mouse. |
+| 🔍 Zoom da foto | No modal, a imagem pode ser ampliada e o foco acompanha mouse ou toque no celular. |
+| 🧩 Miniaturas | Quando há várias fotos, o cliente navega por miniaturas organizadas. |
+| 📏 Guia de medidas | Tabela de P a 3G para ajudar o cliente a escolher o tamanho. |
+| 👤 Conta do cliente | Cadastro, login, confirmação de e-mail, recuperação de senha e logout. |
+| 🔐 Pedido com login | O cliente só consegue enviar pedido pelo WhatsApp depois de entrar na conta. |
+| 🔔 Avisos visuais | Login, saída da conta e bloqueio de pedido aparecem no topo direito por 4 segundos. |
+| 💬 WhatsApp | Pedido enviado com time, liga, foto, arquivo, versão, tamanho e valor. |
 
-## Valores por Versão
+---
 
-| Versão | Valor | Observação |
-| --- | --- | --- |
+## 🛒 Como o pedido funciona
+
+A seção **Como pedir** foi organizada em etapas simples para o cliente entender o processo rapidamente.
+
+```mermaid
+flowchart LR
+  A[Escolher a camisa] --> B[Abrir a foto real]
+  B --> C[Selecionar versão e tamanho]
+  C --> D[Entrar na conta]
+  D --> E[Enviar pelo WhatsApp]
+  E --> F[Confirmar com o responsável]
+```
+
+### Etapas no site
+
+1. 🔎 Escolher a camisa e o tamanho no catálogo.
+2. 💬 Chamar no WhatsApp com a referência da foto.
+3. 👕 Informar versão torcedor, jogador ou personalizada.
+4. ✅ Confirmar pagamento e endereço de entrega.
+5. 📦 Acompanhar o rastreio até a chegada.
+
+---
+
+## 💰 Valores padrão
+
+| Versão | Valor | Detalhe |
+| --- | ---: | --- |
 | Torcedor | R$ 160,00 | Versão padrão. |
 | Jogador | R$ 200,00 | Versão jogador. |
 | Personalizada | R$ 220,00 | Nome atrás e todos os patrocinadores. |
 
-## Fluxo do Cliente
+---
 
-```mermaid
-flowchart LR
-  A[Cliente acessa a DECO Store] --> B[Busca time ou liga]
-  B --> C[Abre uma coleção]
-  C --> D[Navega pelas fotos reais]
-  D --> E[Confere referência e medidas]
-  E --> F[Seleciona versão, tamanho e valor]
-  F --> G[Envia o pedido pelo WhatsApp]
-```
+## 📏 Guia de medidas
 
-## Catálogo
-
-As fotos ficam em `public/catalog` e os dados ficam em `lib/catalog-data.ts`.
-
-| Liga | Clubes no catálogo |
-| --- | --- |
-| Brasileirão Série A | Flamengo, Palmeiras, Corinthians, Santos, São Paulo, Cruzeiro, Atlético Mineiro, Vasco, Bahia, Fluminense e Internacional. |
-| Bundesliga | Bayer Leverkusen, Bayern Munich, Borussia Dortmund, RB Leipzig e Schalke 04. |
-| La Liga | Real Madrid. |
-
-### Referência das Fotos
-
-O app usa duas formas de identificação:
-
-- nome original da foto, quando o arquivo veio com um nome legível;
-- **Referência do catálogo X**, quando a foto veio com código, hash ou nome genérico.
-
-Essa regra mantém o catálogo honesto: o cliente consegue apontar exatamente a foto desejada, e o atendimento recebe o arquivo original na mensagem do WhatsApp.
-
-## Guia de Medidas
-
-As medidas exibidas no modal da camisa são uma base de referência para ajudar no pedido. Elas são apresentadas com a peça aberta:
+As medidas são exibidas no modal da camisa como base para comparação com uma camisa que já veste bem.
 
 | Tamanho | Peito | Comprimento | Altura sugerida |
 | --- | --- | --- | --- |
@@ -78,67 +83,129 @@ As medidas exibidas no modal da camisa são uma base de referência para ajudar 
 | GG | 58 cm | 77 cm | 1,82 a 1,92 m |
 | 3G | 61 cm | 80 cm | 1,88 a 2,00 m |
 
-A orientação do app é comparar essas medidas com uma camisa que já veste bem antes de fechar o pedido.
+> As medidas são aproximadas. O ideal é comparar com uma camisa aberta que já tenha bom caimento.
 
-## Conta e E-mails
+---
 
-A área de conta usa Better Auth com Neon PostgreSQL e envio de e-mail pelo Resend.
+## 🏆 Catálogo atual
+
+| Liga | Clubes disponíveis |
+| --- | --- |
+| Brasileirão Série A | Flamengo, Palmeiras, Corinthians, Santos, São Paulo, Cruzeiro, Atlético Mineiro, Vasco, Bahia, Fluminense e Internacional. |
+| Bundesliga | Bayer Leverkusen, Bayern Munich, Borussia Dortmund, RB Leipzig e Schalke 04. |
+| La Liga | Real Madrid. |
+
+### Como as fotos são identificadas
+
+O app usa a identificação mais segura possível para cada imagem:
+
+- quando o arquivo tem nome claro, a foto usa essa referência;
+- quando o arquivo tem nome genérico, código ou hash, o app usa **Referência do catálogo X**;
+- o WhatsApp recebe também o arquivo original da imagem escolhida.
+
+Isso evita inventar modelo, temporada ou versão quando essa informação não veio no catálogo.
+
+---
+
+## 👤 Área da conta
+
+A conta do cliente foi criada para proteger o fluxo de pedido e permitir confirmação por e-mail.
 
 Fluxos disponíveis:
 
 - cadastro com nome, e-mail e senha;
-- confirmação de e-mail no cadastro;
-- bloqueio de login antes da confirmação;
-- reenvio de confirmação;
-- recuperação de senha por e-mail;
-- fechamento automático do menu após login;
-- visualização de nome, e-mail confirmado e opção de sair.
-
-Os e-mails transacionais usam a marca **DECO** no assunto e no corpo.
-
-## Variáveis de Ambiente
-
-| Variável | Uso |
-| --- | --- |
-| `DATABASE_URL` | Conexão PostgreSQL do Neon. |
-| `BETTER_AUTH_URL` | URL base do ambiente, como `http://localhost:3000` ou a URL final da Vercel. |
-| `BETTER_AUTH_SECRET` | Segredo fixo de autenticação, com pelo menos 32 caracteres. |
-| `RESEND_API_KEY` | Chave de envio de e-mails pelo Resend. |
-| `EMAIL_FROM` | Remetente dos e-mails, como `DECO <conta@seu-dominio.com.br>`. |
-
-O arquivo `.env.example` mantém o formato das variáveis sem credenciais reais. O `.env` local permanece fora do Git.
-
-## Estrutura Principal
-
-| Caminho | Função |
-| --- | --- |
-| `app/page.tsx` | Entrada da home. |
-| `components/catalog-storefront.tsx` | Vitrine, busca, carrossel, modal, guia de medidas e WhatsApp. |
-| `lib/catalog-data.ts` | Dados das coleções, fotos, contato e instruções de pedido. |
-| `public/catalog` | Fotos reais copiadas do catálogo. |
-| `components/account-menu.tsx` | Modal de login, cadastro, confirmação, recuperação e logout. |
-| `lib/auth-*` | Configuração da autenticação e envio de e-mail. |
-| `database/schema.sql` | Estrutura do Neon para usuários, sessões, verificações, limites e pedidos. |
-| `tests/auth.test.ts` | Testes dos fluxos de autenticação e e-mail. |
-
-## Estado Atual
-
-Implementado:
-
-- catálogo real com 202 fotos;
-- busca funcional por time ou liga;
-- carrossel por coleção;
-- modal com miniaturas;
-- referência da foto selecionada;
-- guia de medidas de P a 3G;
-- seleção de versão, tamanho e preço;
-- envio do pedido para WhatsApp;
-- cadastro e login com confirmação por e-mail;
+- confirmação de e-mail;
+- login com conta confirmada;
 - recuperação de senha;
-- layout responsivo.
+- logout;
+- fechamento automático do menu após login;
+- mensagem de login no topo direito;
+- mensagem de saída no topo direito;
+- bloqueio de pedido para quem não estiver logado.
 
-Dependências externas da operação:
+Os e-mails transacionais usam a marca **DECO**.
 
-- confirmação manual pelo WhatsApp;
-- pagamento;
-- envio e rastreio.
+---
+
+## 💬 Atendimento
+
+O contato principal do site é feito pelo WhatsApp.
+
+| Item | Informação |
+| --- | --- |
+| Responsável | Atendimento da DECO Store |
+| WhatsApp | Botão direto no site |
+| Prazo informado | 20 a 40 dias |
+| Tipo de venda | Somente por encomenda |
+
+No rodapé, o cliente encontra um botão com ícone do WhatsApp para falar com o responsável, sem exibir o número como texto solto.
+
+---
+
+## 🎨 Interface atual
+
+A página foi organizada para ficar simples de entender e visualmente consistente.
+
+| Área | Ajuste visual |
+| --- | --- |
+| Topo | Menu fixo com links para catálogo, como pedir e WhatsApp. |
+| Hero | Duas camisas em destaque com efeito individual ao passar o mouse. |
+| Como pedir | Bloco compacto com etapas, ícones e cores leves. |
+| Catálogo | Cards com hover, carrossel, busca e filtros. |
+| Modal da camisa | Fotos, miniaturas, zoom móvel, tamanho, versão, medidas e pedido. |
+| Footer | Blocos organizados com resumo, atendimento e valores. |
+
+---
+
+## 🔐 Variáveis de ambiente
+
+Essas variáveis são necessárias para o app funcionar com autenticação, banco e envio de e-mail.
+
+| Variável | Onde usar | Função |
+| --- | --- | --- |
+| `DATABASE_URL` | `.env` e Vercel | Conexão PostgreSQL do Neon. |
+| `BETTER_AUTH_URL` | `.env` e Vercel | URL base do app. Localmente usa `http://localhost:3000`; na Vercel usa a URL final do projeto. |
+| `BETTER_AUTH_SECRET` | `.env` e Vercel | Segredo fixo da autenticação, com pelo menos 32 caracteres. |
+| `RESEND_API_KEY` | `.env` e Vercel | Chave de envio de e-mails pelo Resend. |
+| `EMAIL_FROM` | `.env` e Vercel | Remetente dos e-mails, como `DECO <conta@seudominio.com.br>`. |
+
+O arquivo `.env.example` mantém apenas o formato das variáveis. O `.env` real deve ficar fora do Git.
+
+---
+
+## 🧱 Estrutura principal
+
+| Caminho | Responsabilidade |
+| --- | --- |
+| `app/page.tsx` | Entrada da página inicial. |
+| `components/catalog-storefront.tsx` | Vitrine, busca, cards, modal, zoom, medidas, pedido e footer. |
+| `components/account-menu.tsx` | Login, cadastro, confirmação, recuperação de senha e logout. |
+| `components/brand-logo.tsx` | Logo textual da DECO. |
+| `lib/catalog-data.ts` | Dados das camisas, fotos, contato e instruções de pedido. |
+| `lib/auth-client.ts` | Cliente de autenticação usado no navegador. |
+| `lib/auth.ts` | Configuração da autenticação. |
+| `lib/email.ts` | Envio dos e-mails transacionais. |
+| `public/catalog` | Fotos reais do catálogo. |
+| `database/schema.sql` | Estrutura do banco Neon. |
+
+---
+
+## ✅ Estado atual
+
+Implementado no app:
+
+- catálogo real com 17 clubes e 202 fotos;
+- pesquisa por time ou liga;
+- cards com efeito de aproximação;
+- destaque visual nas camisas do topo;
+- modal com carrossel e miniaturas;
+- zoom móvel com mouse ou toque;
+- guia de medidas;
+- seleção de tamanho e versão;
+- valores padrão por versão;
+- login obrigatório para enviar pedido;
+- avisos no topo direito por 4 segundos;
+- pedido enviado para WhatsApp com dados preenchidos;
+- cadastro com confirmação por e-mail;
+- recuperação de senha;
+- footer estruturado com atendimento, prazo e valores.
