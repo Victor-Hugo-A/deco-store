@@ -41,7 +41,7 @@ export function createAccountAuth({ database, baseURL, secret, sendEmail }: Acco
       updateAge: 60 * 60 * 24,
     },
     advanced: {
-      cookiePrefix: "kitora",
+      cookiePrefix: "deco",
       ipAddress: { ipAddressHeaders: ["x-vercel-forwarded-for", "x-forwarded-for"] },
     },
     rateLimit: {

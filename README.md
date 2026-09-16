@@ -1,114 +1,145 @@
-﻿# DECO
+# DECO
 
-> ⚽ **Vista o jogo.** Camisas para quem carrega o futebol no peito.
+> Catalogo digital de camisas de futebol sob encomenda, com fotos reais, contato direto pelo WhatsApp e conta com confirmacao por e-mail.
 
-A DECO é uma loja virtual de camisas de futebol para quem busca modelos atuais, retrôs e versões de torcedor ou jogador. O app permite explorar as peças, consultar detalhes e medidas, escolher tamanhos, montar um carrinho e registrar um pedido com os dados de entrega.
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white)
+![Neon](https://img.shields.io/badge/Neon-PostgreSQL-00e599?style=for-the-badge)
+![Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)
+![Resend](https://img.shields.io/badge/Resend-E--mail-111?style=for-the-badge)
 
-A interface se adapta a celulares, tablets e computadores, com preços em reais e navegação em português.
+## Visao Geral
 
-**18 modelos** · **8 categorias** · **Do catálogo ao acompanhamento do pedido**
+A DECO e uma vitrine de camisas de futebol feita para vender por encomenda. O cliente navega pelo catalogo, escolhe a foto de referencia, seleciona tamanho e versao, e envia o pedido pelo WhatsApp ja com a mensagem pronta.
 
-## O que você encontra no app
+O app foi ajustado para usar o material real do catalogo enviado, sem fotos genericas e sem valores inventados. Quando o catalogo nao informa preco, o site mostra **Consultar via WhatsApp**.
 
-### 👕 Encontre seu próximo manto
+## Destaques
 
-O catálogo reúne 18 modelos, organizados nas categorias Brasileirão, Europa, Seleções, Retrô, Américas, Infantil, Treino e Feminina.
+| Area | O que existe hoje |
+| --- | --- |
+| Catalogo | 17 clubes organizados por liga, com 202 fotos reais do catalogo. |
+| Fotos | Cards com carrossel, setas e miniaturas quando existe mais de uma imagem. |
+| Busca | Pesquisa por time ou liga, com suporte a Enter, clique na lupa e busca sem depender de acento. |
+| Pedido | Botao de WhatsApp com time, liga, referencia da foto, arquivo original, versao e tamanho. |
+| Conta | Cadastro, login, confirmacao por e-mail, recuperacao de senha e logout. |
+| Prazo | Exibe o prazo informado no catalogo: **20 a 40 dias**. |
+| Contato | WhatsApp principal: **(61) 99891-2720**. |
 
-- Busca por nome da camisa, time ou categoria.
-- Filtros por categoria, que podem ser combinados com a busca.
-- Fotos ilustrativas, temporada, preços e destaques de produtos.
-- Exibição do preço anterior nas peças com desconto.
+## Experiencia do Cliente
 
-### 📏 Escolha com as medidas em mãos
+```mermaid
+flowchart LR
+  A[Cliente acessa a DECO] --> B[Busca time ou liga]
+  B --> C[Escolhe uma camisa no catalogo]
+  C --> D[Navega pelas fotos reais]
+  D --> E[Seleciona tamanho e versao]
+  E --> F[Envia a referencia pelo WhatsApp]
+  F --> G[Confirma pagamento e endereco]
+  G --> H[Acompanha o rastreio ate a chegada]
+```
 
-Ao abrir uma camisa, você encontra sua descrição, cor e características de tecido, acabamento e modelagem. Uma tabela apresenta medidas aproximadas de peito e comprimento, além de uma faixa de altura sugerida para ajudar na escolha.
+## Catalogo
 
-Antes de adicionar a peça ao carrinho, é possível selecionar um dos tamanhos disponíveis na interface: P, M, G, GG ou 3G.
+O catalogo atual foi montado a partir do arquivo de imagens recebido. Ele esta estruturado por colecao/time, mantendo as fotos em `public/catalog` e os dados em `lib/catalog-data.ts`.
 
-### 🛍️ Seu carrinho, suas escolhas
+Quando a imagem veio com nome reconhecivel no arquivo original, o site mostra esse nome. Quando o arquivo veio como codigo ou hash, o site mostra **Referencia do catalogo X**. Essa escolha evita inventar modelo, temporada ou versao sem uma fonte confiavel.
 
-O carrinho reúne as peças escolhidas com foto, nome, tamanho, quantidade e valor. Você pode aumentar ou diminuir as quantidades e remover uma peça reduzindo sua quantidade a zero. O subtotal é atualizado conforme as alterações.
+Ligas e clubes presentes:
 
-Os itens são salvos no próprio navegador para permitir que você retome sua seleção ao voltar ao site.
+| Liga | Clubes |
+| --- | --- |
+| Brasileirao Serie A | Flamengo, Palmeiras, Corinthians, Santos, Sao Paulo, Cruzeiro, Atletico Mineiro, Vasco, Bahia, Fluminense e Internacional. |
+| Bundesliga | Bayer Leverkusen, Bayern Munich, Borussia Dortmund, RB Leipzig e Schalke 04. |
+| La Liga | Real Madrid. |
 
-### 📋 Registre seu pedido
+## Conta e E-mails
 
-Na finalização, você informa nome, e-mail, telefone e endereço de entrega, incluindo CEP, estado, cidade e bairro. O app registra o pedido e apresenta uma confirmação com o destino e um código de acompanhamento.
+A area de conta usa Better Auth com banco Neon e envio de e-mail pelo Resend.
 
-Guarde esse código: ele permite consultar o pedido depois, pela opção **Rastrear pedido**.
+Fluxos implementados:
 
-### 👤 Sua conta DECO
+- criar conta com nome, e-mail e senha;
+- enviar e-mail de confirmacao no cadastro;
+- bloquear login ate o e-mail ser confirmado;
+- reenviar confirmacao;
+- recuperar senha por e-mail;
+- fechar automaticamente o menu depois que o login entra;
+- mostrar nome, e-mail confirmado e botao para sair da conta.
 
-O ícone de pessoa no cabeçalho abre as opções **Entrar** e **Criar conta**. No cadastro, você informa nome, e-mail e uma senha de pelo menos 8 caracteres.
+Os e-mails da loja usam a marca **DECO** no assunto e no corpo da mensagem.
 
-- Um e-mail com o botão **Confirmar meu e-mail** é enviado para validar o endereço.
-- O login só é liberado depois da confirmação; o link vale por 1 hora.
-- Você pode reenviar a confirmação e recuperar uma senha esquecida por e-mail.
-- Ao entrar, o menu mostra seu nome, e-mail confirmado e a opção de sair.
+## Variaveis de Ambiente
 
-A sessão dura até 7 dias e é renovada durante o uso. A conta ainda não reúne um histórico de compras: o acompanhamento dos pedidos continua disponível pelo código.
+As mesmas variaveis devem existir no `.env` local e nas configuracoes da Vercel.
 
-### 📦 Acompanhe pelo código
-
-A consulta pelo código mostra a cidade e o estado de destino, uma previsão de entrega e uma barra de progresso com quatro etapas:
-
-1. Pedido confirmado.
-2. Preparando o manto.
-3. Em trânsito.
-4. Saiu para entrega.
-
-Os pedidos ficam armazenados em banco de dados e podem ser consultados novamente com o código recebido.
-
-## Do primeiro clique ao pedido
-
-1. Explore o catálogo ou busque a camisa que deseja.
-2. Abra os detalhes, consulte as medidas e escolha o tamanho.
-3. Adicione a peça ao carrinho e revise os itens e as quantidades.
-4. Selecione **Finalizar pedido**, preencha os dados de entrega e confirme.
-5. Guarde o código apresentado e use **Rastrear pedido** para consultar o acompanhamento.
-
-## Sobre a versão atual
-
-O catálogo, a seleção de tamanhos, o carrinho e o registro e a consulta de pedidos estão implementados. Algumas partes da experiência ainda são demonstrativas:
-
-- **Pagamento:** a finalização registra o pedido, mas não realiza cobranças. Pix, cartão e parcelamento ainda não têm processamento integrado.
-- **Entrega:** a previsão é estimada a partir do estado de destino. As etapas avançam conforme o tempo desde o registro do pedido, sem consultar uma transportadora.
-- **Frete:** embora a interface mencione cálculo no checkout, a versão atual apresenta apenas o total dos produtos, sem calcular ou cobrar frete.
-
-Assim, é possível percorrer a experiência de escolha e registro de um pedido, com pagamento e logística ainda em caráter demonstrativo.
-
-## ⚙️ Configuração da conta e dos e-mails
-
-O cadastro usa Better Auth, com dados no Neon e envio de e-mails pelo Resend. As mesmas cinco variáveis devem existir no `.env` local e nas configurações do projeto na Vercel:
-
-| Variável | No `.env` local | Na Vercel |
+| Variavel | Local | Vercel |
 | --- | --- | --- |
-| `DATABASE_URL` | Conexão PostgreSQL do Neon. | Conexão do banco destinado ao ambiente publicado. |
-| `BETTER_AUTH_URL` | `http://localhost:3000` | URL completa e definitiva do site, como `https://sua-loja.vercel.app` ou seu domínio próprio. Sem caminhos adicionais. |
-| `BETTER_AUTH_SECRET` | Segredo aleatório de pelo menos 32 caracteres. | Outro segredo aleatório, fixo para esse ambiente. |
-| `RESEND_API_KEY` | Chave de API criada no Resend com permissão para enviar e-mails. | Chave de envio do Resend para o ambiente publicado. |
-| `EMAIL_FROM` | `"DECO <conta@seu-dominio.com.br>"` | `DECO <conta@seu-dominio.com.br>` — sem as aspas externas no painel. |
+| `DATABASE_URL` | URL PostgreSQL do Neon. | URL do banco usado no ambiente publicado. |
+| `BETTER_AUTH_URL` | `http://localhost:3000` | URL final do site, como `https://deco.vercel.app` ou dominio proprio. |
+| `BETTER_AUTH_SECRET` | Segredo aleatorio de pelo menos 32 caracteres. | Segredo fixo e separado do ambiente local. |
+| `RESEND_API_KEY` | Chave de API do Resend. | Chave de envio do Resend para producao. |
+| `EMAIL_FROM` | `DECO <conta@seu-dominio.com.br>` | Mesmo remetente, sem aspas externas no painel da Vercel. |
 
-O arquivo [`.env.example`](.env.example) contém o modelo sem credenciais. Nenhuma dessas variáveis usa o prefixo `NEXT_PUBLIC_`. O `.env` fica fora do Git.
+Observacoes:
 
-### Preparar o envio
+- nenhuma variavel de servidor deve usar `NEXT_PUBLIC_`;
+- o arquivo `.env` fica fora do Git;
+- o `.env.example` mostra o formato sem credenciais reais;
+- se o remetente ainda estiver com o nome anterior na Vercel, os e-mails podem continuar saindo com a marca antiga.
 
-1. No Resend, adicione um domínio que você controla e configure os registros DNS solicitados até ele ficar verificado.
-2. Crie uma chave de API com permissão de envio e preencha `RESEND_API_KEY`.
-3. Em `EMAIL_FROM`, use um endereço desse domínio verificado. A URL do site pode continuar sendo da Vercel; o domínio do remetente é uma configuração separada.
-4. Para testes restritos à sua própria conta Resend, é possível usar `DECO <onboarding@resend.dev>`. Para enviar aos clientes, configure o domínio verificado. Veja as [restrições de envio do Resend](https://resend.com/docs/api-reference/errors).
+## Estrutura Principal
 
-### Preparar o banco e os ambientes
+| Caminho | Funcao |
+| --- | --- |
+| `app/page.tsx` | Entrada da home. Renderiza a vitrine principal. |
+| `components/catalog-storefront.tsx` | Interface do catalogo, busca, carrossel, modal e WhatsApp. |
+| `lib/catalog-data.ts` | Dados das colecoes, fotos, contato e instrucoes de pedido. |
+| `public/catalog` | Fotos reais copiadas do catalogo enviado. |
+| `components/account-menu.tsx` | Modal de login, cadastro, confirmacao, recuperacao e logout. |
+| `lib/auth-*` | Configuracao do Better Auth, envio de e-mail e cliente de autenticacao. |
+| `database/schema.sql` | Tabelas do Neon para pedidos, usuarios, sessoes e verificacoes. |
+| `tests/auth.test.ts` | Testes dos fluxos de cadastro, confirmacao, login e recuperacao. |
 
-- Aplique [database/schema.sql](database/schema.sql) no SQL Editor do Neon. O arquivo cria as tabelas de contas, sessões, credenciais, verificações e limites de tentativas, preservando os pedidos existentes. O script `db:init` também aplica esse arquivo e carrega o `.env` automaticamente.
-- Na Vercel, acesse **Project → Settings → Environment Variables**, adicione as cinco variáveis em **Production** e faça um novo deploy.
-- Se usar **Preview**, configure as variáveis também nesse ambiente, com a URL exata que será acessada. Prefira banco e segredo separados para os testes. URLs diferentes exigem uma configuração correspondente de `BETTER_AUTH_URL`.
-- Localmente, reinicie o app pela IDE depois de editar o `.env`. Se já houver `.env.local`, confira se ele não sobrescreve essas variáveis.
+## Estado Atual
 
-O segredo deve ser gerado com um gerador criptográfico, como um gerenciador de senhas. Não use senha pessoal nem publique esse valor. Alterá-lo invalida sessões e links assinados anteriormente.
+Implementado:
 
-### Conferir o funcionamento
+- catalogo real com 202 fotos;
+- busca funcional por texto;
+- carrossel por colecao;
+- modal com miniaturas;
+- selecao de tamanho e versao;
+- envio do pedido para WhatsApp;
+- cadastro e login com confirmacao por e-mail;
+- recuperacao de senha;
+- layout responsivo.
 
-Crie uma conta com um e-mail que você pode acessar, abra a mensagem, confirme o endereço e entre com sua senha. Antes da confirmação, o login deve ser bloqueado. Confira também **Reenviar confirmação**, **Esqueci minha senha** e **Sair da conta**.
+Ainda depende de operacao externa:
 
-Se a mensagem não chegar, verifique o spam e o painel de envios do Resend. Erros de envio podem indicar chave inválida ou remetente não autorizado; links apontando para o endereço errado indicam que `BETTER_AUTH_URL` precisa ser corrigida. Depois de um erro no envio inicial, use **Reenviar confirmação**.
+- preco final de cada camisa;
+- confirmacao manual pelo WhatsApp;
+- pagamento;
+- dados reais de envio/rastreio.
+
+## GitHub
+
+O repositorio remoto atual ainda esta com o nome antigo:
+
+```txt
+Victor-Hugo-A/kitora-football-store
+```
+
+Da para mudar para `deco` no GitHub. O jeito mais simples e:
+
+1. abrir o repositorio no GitHub;
+2. acessar **Settings**;
+3. em **Repository name**, trocar para `deco`;
+4. clicar em **Rename**;
+5. atualizar o remoto local depois da troca:
+
+```bash
+git remote set-url origin https://github.com/Victor-Hugo-A/deco.git
+```
+
+O GitHub costuma redirecionar o endereco antigo por um tempo, mas e melhor atualizar o remoto para evitar confusao em futuros `push`.
