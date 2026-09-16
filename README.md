@@ -1,8 +1,8 @@
-﻿# KITORA
+﻿# DECO
 
 > ⚽ **Vista o jogo.** Camisas para quem carrega o futebol no peito.
 
-A KITORA é uma loja virtual de camisas de futebol para quem busca modelos atuais, retrôs e versões de torcedor ou jogador. O app permite explorar as peças, consultar detalhes e medidas, escolher tamanhos, montar um carrinho e registrar um pedido com os dados de entrega.
+A DECO é uma loja virtual de camisas de futebol para quem busca modelos atuais, retrôs e versões de torcedor ou jogador. O app permite explorar as peças, consultar detalhes e medidas, escolher tamanhos, montar um carrinho e registrar um pedido com os dados de entrega.
 
 A interface se adapta a celulares, tablets e computadores, com preços em reais e navegação em português.
 
@@ -37,7 +37,7 @@ Na finalização, você informa nome, e-mail, telefone e endereço de entrega, i
 
 Guarde esse código: ele permite consultar o pedido depois, pela opção **Rastrear pedido**.
 
-### 👤 Sua conta KITORA
+### 👤 Sua conta DECO
 
 O ícone de pessoa no cabeçalho abre as opções **Entrar** e **Criar conta**. No cadastro, você informa nome, e-mail e uma senha de pelo menos 8 caracteres.
 
@@ -87,7 +87,7 @@ O cadastro usa Better Auth, com dados no Neon e envio de e-mails pelo Resend. As
 | `BETTER_AUTH_URL` | `http://localhost:3000` | URL completa e definitiva do site, como `https://sua-loja.vercel.app` ou seu domínio próprio. Sem caminhos adicionais. |
 | `BETTER_AUTH_SECRET` | Segredo aleatório de pelo menos 32 caracteres. | Outro segredo aleatório, fixo para esse ambiente. |
 | `RESEND_API_KEY` | Chave de API criada no Resend com permissão para enviar e-mails. | Chave de envio do Resend para o ambiente publicado. |
-| `EMAIL_FROM` | `"KITORA <conta@seu-dominio.com.br>"` | `KITORA <conta@seu-dominio.com.br>` — sem as aspas externas no painel. |
+| `EMAIL_FROM` | `"DECO <conta@seu-dominio.com.br>"` | `DECO <conta@seu-dominio.com.br>` — sem as aspas externas no painel. |
 
 O arquivo [`.env.example`](.env.example) contém o modelo sem credenciais. Nenhuma dessas variáveis usa o prefixo `NEXT_PUBLIC_`. O `.env` fica fora do Git.
 
@@ -96,7 +96,7 @@ O arquivo [`.env.example`](.env.example) contém o modelo sem credenciais. Nenhu
 1. No Resend, adicione um domínio que você controla e configure os registros DNS solicitados até ele ficar verificado.
 2. Crie uma chave de API com permissão de envio e preencha `RESEND_API_KEY`.
 3. Em `EMAIL_FROM`, use um endereço desse domínio verificado. A URL do site pode continuar sendo da Vercel; o domínio do remetente é uma configuração separada.
-4. Para testes restritos à sua própria conta Resend, é possível usar `KITORA <onboarding@resend.dev>`. Para enviar aos clientes, configure o domínio verificado. Veja as [restrições de envio do Resend](https://resend.com/docs/api-reference/errors).
+4. Para testes restritos à sua própria conta Resend, é possível usar `DECO <onboarding@resend.dev>`. Para enviar aos clientes, configure o domínio verificado. Veja as [restrições de envio do Resend](https://resend.com/docs/api-reference/errors).
 
 ### Preparar o banco e os ambientes
 

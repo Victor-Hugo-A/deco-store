@@ -32,7 +32,7 @@ function request(path: string, body?: object, cookie?: string, ip = "192.0.2.10"
 
 test("cadastro exige confirmação; login, sessão, recuperação e logout funcionam", async () => {
   const credentials = { email: "torcedor@example.com", password: "Senha-de-teste-123" };
-  const signup = await request("/sign-up/email", { ...credentials, name: "Torcedor KITORA", callbackURL: "/conta/confirmacao" });
+  const signup = await request("/sign-up/email", { ...credentials, name: "Torcedor DECO", callbackURL: "/conta/confirmacao" });
   assert.equal(signup.status, 200, await signup.text());
   assert.equal(sent.length, 1);
   assert.equal(sent[0].kind, "verification");
@@ -97,7 +97,7 @@ test("e-mail usa remetente configurado, texto alternativo e trata falha do prove
   const originalKey = process.env.RESEND_API_KEY;
   const originalFrom = process.env.EMAIL_FROM;
   process.env.RESEND_API_KEY = "test-key";
-  process.env.EMAIL_FROM = "KITORA <conta@example.com>";
+  process.env.EMAIL_FROM = "DECO <conta@example.com>";
   context.after(() => {
     if (originalKey === undefined) delete process.env.RESEND_API_KEY; else process.env.RESEND_API_KEY = originalKey;
     if (originalFrom === undefined) delete process.env.EMAIL_FROM; else process.env.EMAIL_FROM = originalFrom;
@@ -105,7 +105,7 @@ test("e-mail usa remetente configurado, texto alternativo e trata falha do prove
   context.mock.method(globalThis, "fetch", async (url: string, options: RequestInit) => {
     assert.equal(url, "https://api.resend.com/emails");
     const body = JSON.parse(String(options.body));
-    assert.equal(body.from, "KITORA <conta@example.com>");
+    assert.equal(body.from, "DECO <conta@example.com>");
     assert.match(body.text, /O link expira em 1 hora/);
     assert.match(body.html, /&amp;/);
     return new Response(JSON.stringify({ id: "test-email" }));

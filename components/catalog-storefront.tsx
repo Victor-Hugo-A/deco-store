@@ -43,7 +43,7 @@ function buildWhatsappUrl(collection: CatalogCollection, imageIndex: number, siz
     "Olá! Quero fazer uma encomenda pelo catálogo DECO.",
     `Time: ${collection.team}`,
     `Liga: ${collection.league}`,
-    `Modelo/foto: ${image.label}`,
+    `Referência/foto: ${image.label}`,
     `Arquivo de referência: ${image.originalFile}`,
     `Versão: ${version}`,
     `Tamanho: ${size}`,
@@ -345,7 +345,7 @@ export function CatalogStorefront() {
                         </div>
                         <div className="mt-4 grid gap-2 text-sm text-black/60">
                           <span className="flex items-center gap-2">
-                            <ImageIcon size={16} /> Foto atual: {image.label}
+                            <ImageIcon size={16} /> Referência atual: {image.label}
                           </span>
                           <span className="flex items-center gap-2">
                             <Clock size={16} /> Prazo: {collection.leadTime}
@@ -486,7 +486,7 @@ export function CatalogStorefront() {
                 </div>
 
                 <div className="mt-6">
-                  <p className="mb-2 text-sm font-bold">Foto selecionada</p>
+                  <p className="mb-2 text-sm font-bold">Referência selecionada</p>
                   <div className="rounded-xl border border-black/10 bg-white p-3 text-sm text-black/65">
                     {selected.images[selectedImageIndex]?.label}
                   </div>

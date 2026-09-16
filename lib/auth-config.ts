@@ -10,7 +10,7 @@ type AccountAuthConfig = {
 
 export function createAccountAuth({ database, baseURL, secret, sendEmail }: AccountAuthConfig) {
   return betterAuth({
-    appName: "KITORA",
+    appName: "DECO",
     database,
     baseURL,
     secret,

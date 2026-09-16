@@ -62,6 +62,7 @@ export function AccountMenu({initialMode = "login", label}: { initialMode?: Mode
                     return;
                 }
                 await refetch();
+                setOpen(false);
             } else if (mode === "signup") {
                 const result = await authClient.signUp.email({
                     name,
@@ -165,7 +166,7 @@ export function AccountMenu({initialMode = "login", label}: { initialMode?: Mode
             <DialogHeader>
                 <DialogTitle
                     className="text-2xl font-black tracking-tight">{session ? "SUA CONTA" : titles[mode]}</DialogTitle>
-                <DialogDescription>{session ? "Seu espaço na KITORA. Futebol se veste." : descriptions[mode]}</DialogDescription>
+                <DialogDescription>{session ? "Seu espaço na DECO. Futebol se veste." : descriptions[mode]}</DialogDescription>
             </DialogHeader>
             {isPending ? <div role="status" className="flex items-center gap-2 py-6 text-sm"><LoaderCircle
                 className="animate-spin" size={18}/> Consultando sua conta…</div> : session ?
