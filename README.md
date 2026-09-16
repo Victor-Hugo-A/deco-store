@@ -1,6 +1,6 @@
-# DECO
+# DECO Store
 
-> Catalogo digital de camisas de futebol sob encomenda, com fotos reais, contato direto pelo WhatsApp e conta com confirmacao por e-mail.
+> Catálogo digital de camisas de futebol sob encomenda, com fotos reais, atendimento pelo WhatsApp e conta com confirmação por e-mail.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white)
@@ -8,138 +8,130 @@
 ![Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)
 ![Resend](https://img.shields.io/badge/Resend-E--mail-111?style=for-the-badge)
 
-## Visao Geral
+## Visão Geral
 
-A DECO e uma vitrine de camisas de futebol feita para vender por encomenda. O cliente navega pelo catalogo, escolhe a foto de referencia, seleciona tamanho e versao, e envia o pedido pelo WhatsApp ja com a mensagem pronta.
+A DECO Store é uma vitrine de camisas de futebol feita para venda sob encomenda. O cliente consulta o catálogo, navega pelas fotos reais, escolhe tamanho e versão, e envia a referência pelo WhatsApp com a mensagem já montada.
 
-O app foi ajustado para usar o material real do catalogo enviado, sem fotos genericas e sem valores inventados. Quando o catalogo nao informa preco, o site mostra **Consultar via WhatsApp**.
+O catálogo usa o material recebido no arquivo original. Quando uma foto veio sem nome confiável, o app mostra **Referência do catálogo** em vez de inventar modelo, temporada ou preço. Quando o valor não consta no material, o site exibe **Consultar via WhatsApp**.
 
 ## Destaques
 
-| Area | O que existe hoje |
+| Área | Funcionamento atual |
 | --- | --- |
-| Catalogo | 17 clubes organizados por liga, com 202 fotos reais do catalogo. |
+| Catálogo | 17 clubes organizados por liga, com 202 fotos reais. |
 | Fotos | Cards com carrossel, setas e miniaturas quando existe mais de uma imagem. |
-| Busca | Pesquisa por time ou liga, com suporte a Enter, clique na lupa e busca sem depender de acento. |
-| Pedido | Botao de WhatsApp com time, liga, referencia da foto, arquivo original, versao e tamanho. |
-| Conta | Cadastro, login, confirmacao por e-mail, recuperacao de senha e logout. |
-| Prazo | Exibe o prazo informado no catalogo: **20 a 40 dias**. |
-| Contato | WhatsApp principal: **(61) 99891-2720**. |
+| Busca | Pesquisa por time ou liga, com Enter, clique na lupa e busca sem depender de acentos. |
+| Pedido | WhatsApp com time, liga, referência da foto, arquivo original, versão e tamanho. |
+| Medidas | Guia base de P a 3G para o cliente comparar com uma camisa que já veste bem. |
+| Conta | Cadastro, login, confirmação por e-mail, recuperação de senha e logout. |
+| Prazo | Informação do catálogo: **20 a 40 dias**. |
+| Contato | WhatsApp: **(61) 99891-2720**. |
 
-## Experiencia do Cliente
+## Fluxo do Cliente
 
 ```mermaid
 flowchart LR
-  A[Cliente acessa a DECO] --> B[Busca time ou liga]
-  B --> C[Escolhe uma camisa no catalogo]
+  A[Cliente acessa a DECO Store] --> B[Busca time ou liga]
+  B --> C[Abre uma coleção]
   C --> D[Navega pelas fotos reais]
-  D --> E[Seleciona tamanho e versao]
-  E --> F[Envia a referencia pelo WhatsApp]
-  F --> G[Confirma pagamento e endereco]
-  G --> H[Acompanha o rastreio ate a chegada]
+  D --> E[Confere referência e medidas]
+  E --> F[Seleciona versão e tamanho]
+  F --> G[Envia o pedido pelo WhatsApp]
 ```
 
-## Catalogo
+## Catálogo
 
-O catalogo atual foi montado a partir do arquivo de imagens recebido. Ele esta estruturado por colecao/time, mantendo as fotos em `public/catalog` e os dados em `lib/catalog-data.ts`.
+As fotos ficam em `public/catalog` e os dados ficam em `lib/catalog-data.ts`.
 
-Quando a imagem veio com nome reconhecivel no arquivo original, o site mostra esse nome. Quando o arquivo veio como codigo ou hash, o site mostra **Referencia do catalogo X**. Essa escolha evita inventar modelo, temporada ou versao sem uma fonte confiavel.
-
-Ligas e clubes presentes:
-
-| Liga | Clubes |
+| Liga | Clubes no catálogo |
 | --- | --- |
-| Brasileirao Serie A | Flamengo, Palmeiras, Corinthians, Santos, Sao Paulo, Cruzeiro, Atletico Mineiro, Vasco, Bahia, Fluminense e Internacional. |
+| Brasileirão Série A | Flamengo, Palmeiras, Corinthians, Santos, São Paulo, Cruzeiro, Atlético Mineiro, Vasco, Bahia, Fluminense e Internacional. |
 | Bundesliga | Bayer Leverkusen, Bayern Munich, Borussia Dortmund, RB Leipzig e Schalke 04. |
 | La Liga | Real Madrid. |
 
+### Referência das Fotos
+
+O app usa duas formas de identificação:
+
+- nome original da foto, quando o arquivo veio com um nome legível;
+- **Referência do catálogo X**, quando a foto veio com código, hash ou nome genérico.
+
+Essa regra mantém o catálogo honesto: o cliente consegue apontar exatamente a foto desejada, e o atendimento recebe o arquivo original na mensagem do WhatsApp.
+
+## Guia de Medidas
+
+As medidas exibidas no modal da camisa são uma base de referência para ajudar no pedido. Elas são apresentadas com a peça aberta:
+
+| Tamanho | Peito | Comprimento | Altura sugerida |
+| --- | --- | --- | --- |
+| P | 50 cm | 69 cm | 1,60 a 1,70 m |
+| M | 52 cm | 71 cm | 1,68 a 1,78 m |
+| G | 55 cm | 74 cm | 1,75 a 1,85 m |
+| GG | 58 cm | 77 cm | 1,82 a 1,92 m |
+| 3G | 61 cm | 80 cm | 1,88 a 2,00 m |
+
+A orientação do app é comparar essas medidas com uma camisa que já veste bem antes de fechar o pedido.
+
 ## Conta e E-mails
 
-A area de conta usa Better Auth com banco Neon e envio de e-mail pelo Resend.
+A área de conta usa Better Auth com Neon PostgreSQL e envio de e-mail pelo Resend.
 
-Fluxos implementados:
+Fluxos disponíveis:
 
-- criar conta com nome, e-mail e senha;
-- enviar e-mail de confirmacao no cadastro;
-- bloquear login ate o e-mail ser confirmado;
-- reenviar confirmacao;
-- recuperar senha por e-mail;
-- fechar automaticamente o menu depois que o login entra;
-- mostrar nome, e-mail confirmado e botao para sair da conta.
+- cadastro com nome, e-mail e senha;
+- confirmação de e-mail no cadastro;
+- bloqueio de login antes da confirmação;
+- reenvio de confirmação;
+- recuperação de senha por e-mail;
+- fechamento automático do menu após login;
+- visualização de nome, e-mail confirmado e opção de sair.
 
-Os e-mails da loja usam a marca **DECO** no assunto e no corpo da mensagem.
+Os e-mails transacionais usam a marca **DECO** no assunto e no corpo.
 
-## Variaveis de Ambiente
+## Variáveis de Ambiente
 
-As mesmas variaveis devem existir no `.env` local e nas configuracoes da Vercel.
+| Variável | Uso |
+| --- | --- |
+| `DATABASE_URL` | Conexão PostgreSQL do Neon. |
+| `BETTER_AUTH_URL` | URL base do ambiente, como `http://localhost:3000` ou a URL final da Vercel. |
+| `BETTER_AUTH_SECRET` | Segredo fixo de autenticação, com pelo menos 32 caracteres. |
+| `RESEND_API_KEY` | Chave de envio de e-mails pelo Resend. |
+| `EMAIL_FROM` | Remetente dos e-mails, como `DECO <conta@seu-dominio.com.br>`. |
 
-| Variavel | Local | Vercel |
-| --- | --- | --- |
-| `DATABASE_URL` | URL PostgreSQL do Neon. | URL do banco usado no ambiente publicado. |
-| `BETTER_AUTH_URL` | `http://localhost:3000` | URL final do site, como `https://deco.vercel.app` ou dominio proprio. |
-| `BETTER_AUTH_SECRET` | Segredo aleatorio de pelo menos 32 caracteres. | Segredo fixo e separado do ambiente local. |
-| `RESEND_API_KEY` | Chave de API do Resend. | Chave de envio do Resend para producao. |
-| `EMAIL_FROM` | `DECO <conta@seu-dominio.com.br>` | Mesmo remetente, sem aspas externas no painel da Vercel. |
-
-Observacoes:
-
-- nenhuma variavel de servidor deve usar `NEXT_PUBLIC_`;
-- o arquivo `.env` fica fora do Git;
-- o `.env.example` mostra o formato sem credenciais reais;
-- se o remetente ainda estiver com o nome anterior na Vercel, os e-mails podem continuar saindo com a marca antiga.
+O arquivo `.env.example` mantém o formato das variáveis sem credenciais reais. O `.env` local permanece fora do Git.
 
 ## Estrutura Principal
 
-| Caminho | Funcao |
+| Caminho | Função |
 | --- | --- |
-| `app/page.tsx` | Entrada da home. Renderiza a vitrine principal. |
-| `components/catalog-storefront.tsx` | Interface do catalogo, busca, carrossel, modal e WhatsApp. |
-| `lib/catalog-data.ts` | Dados das colecoes, fotos, contato e instrucoes de pedido. |
-| `public/catalog` | Fotos reais copiadas do catalogo enviado. |
-| `components/account-menu.tsx` | Modal de login, cadastro, confirmacao, recuperacao e logout. |
-| `lib/auth-*` | Configuracao do Better Auth, envio de e-mail e cliente de autenticacao. |
-| `database/schema.sql` | Tabelas do Neon para pedidos, usuarios, sessoes e verificacoes. |
-| `tests/auth.test.ts` | Testes dos fluxos de cadastro, confirmacao, login e recuperacao. |
+| `app/page.tsx` | Entrada da home. |
+| `components/catalog-storefront.tsx` | Vitrine, busca, carrossel, modal, guia de medidas e WhatsApp. |
+| `lib/catalog-data.ts` | Dados das coleções, fotos, contato e instruções de pedido. |
+| `public/catalog` | Fotos reais copiadas do catálogo. |
+| `components/account-menu.tsx` | Modal de login, cadastro, confirmação, recuperação e logout. |
+| `lib/auth-*` | Configuração da autenticação e envio de e-mail. |
+| `database/schema.sql` | Estrutura do Neon para usuários, sessões, verificações, limites e pedidos. |
+| `tests/auth.test.ts` | Testes dos fluxos de autenticação e e-mail. |
 
 ## Estado Atual
 
 Implementado:
 
-- catalogo real com 202 fotos;
-- busca funcional por texto;
-- carrossel por colecao;
+- catálogo real com 202 fotos;
+- busca funcional por time ou liga;
+- carrossel por coleção;
 - modal com miniaturas;
-- selecao de tamanho e versao;
+- referência da foto selecionada;
+- guia de medidas de P a 3G;
+- seleção de versão e tamanho;
 - envio do pedido para WhatsApp;
-- cadastro e login com confirmacao por e-mail;
-- recuperacao de senha;
+- cadastro e login com confirmação por e-mail;
+- recuperação de senha;
 - layout responsivo.
 
-Ainda depende de operacao externa:
+Dependências externas da operação:
 
-- preco final de cada camisa;
-- confirmacao manual pelo WhatsApp;
+- valor final de cada camisa;
+- confirmação manual pelo WhatsApp;
 - pagamento;
-- dados reais de envio/rastreio.
-
-## GitHub
-
-O repositorio remoto atual ainda esta com o nome antigo:
-
-```txt
-Victor-Hugo-A/kitora-football-store
-```
-
-Da para mudar para `deco` no GitHub. O jeito mais simples e:
-
-1. abrir o repositorio no GitHub;
-2. acessar **Settings**;
-3. em **Repository name**, trocar para `deco`;
-4. clicar em **Rename**;
-5. atualizar o remoto local depois da troca:
-
-```bash
-git remote set-url origin https://github.com/Victor-Hugo-A/deco.git
-```
-
-O GitHub costuma redirecionar o endereco antigo por um tempo, mas e melhor atualizar o remoto para evitar confusao em futuros `push`.
+- envio e rastreio.

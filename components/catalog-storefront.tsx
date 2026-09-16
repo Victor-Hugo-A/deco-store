@@ -25,6 +25,13 @@ import { catalogCollections, catalogContact, type CatalogCollection } from "@/li
 
 const sizes = ["P", "M", "G", "GG", "3G"];
 const versions = ["Torcedor", "Jogador"];
+const sizeGuide = [
+  { size: "P", chest: "50 cm", length: "69 cm", height: "1,60 a 1,70 m" },
+  { size: "M", chest: "52 cm", length: "71 cm", height: "1,68 a 1,78 m" },
+  { size: "G", chest: "55 cm", length: "74 cm", height: "1,75 a 1,85 m" },
+  { size: "GG", chest: "58 cm", length: "77 cm", height: "1,82 a 1,92 m" },
+  { size: "3G", chest: "61 cm", length: "80 cm", height: "1,88 a 2,00 m" },
+];
 
 function normalizeSearch(value: string) {
   return value
@@ -529,6 +536,42 @@ export function CatalogStorefront() {
                         {size}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-black">Guia de medidas</p>
+                      <p className="mt-1 text-xs leading-relaxed text-black/55">
+                        Medidas aproximadas da camisa aberta. Compare com uma camisa que veste bem antes de pedir.
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-[#fff1e9] px-3 py-1 text-[11px] font-bold text-[#d33f00]">
+                      Base
+                    </span>
+                  </div>
+                  <div className="mt-4 overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="text-black/45">
+                        <tr className="border-b border-black/10">
+                          <th className="py-2 font-bold">Tam.</th>
+                          <th className="font-bold">Peito</th>
+                          <th className="font-bold">Comp.</th>
+                          <th className="font-bold">Altura</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sizeGuide.map((item) => (
+                          <tr key={item.size} className="border-b border-black/10 last:border-0">
+                            <td className="py-2 font-black">{item.size}</td>
+                            <td>{item.chest}</td>
+                            <td>{item.length}</td>
+                            <td>{item.height}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
